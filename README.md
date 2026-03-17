@@ -1,10 +1,10 @@
-# GeoPoint Manager v5.1 — Plugin QGIS
+# GeoPoint Manager v5.2 — Plugin QGIS
 
 Plugin QGIS per creare **layer vettoriali di punti** a partire da sorgenti dati contenenti
 campi di coordinate geografiche (latitudine/longitudine).
 
 **Compatibilità:** QGIS 3.16+ / 4.x &nbsp;|&nbsp; **Licenza:** GPL-2.0+
-**Autori:** @gbvitrano, Claude AI (Anthropic)
+**Autore:** [@gbvitrano](https://github.com/gbvitrano)
 
 ---
 
@@ -49,7 +49,7 @@ campi di coordinate geografiche (latitudine/longitudine).
 | **Tab 3 – Log** | Storico delle operazioni con timestamp. |
 | **Tab 4 – Info / About** | Documentazione del plugin. |
 
-La barra inferiore contiene: **Aggiungi layer virtuale di punti e la relativa tabella**, **Esporta Layer…**, **Salva GPKG** e **Chiudi**.
+La barra inferiore contiene: **Aggiungi layer vettoriale di punti**, **Esporta Layer…**, **Salva GPKG**, **🌐 IT/EN** e **Chiudi**.
 
 ---
 
@@ -74,6 +74,14 @@ La barra inferiore contiene: **Aggiungi layer virtuale di punti e la relativa ta
 
 ---
 
+## Novità v5.2
+
+- **Interfaccia bilingue ITA / EN** — pulsante **🌐 IT/EN** nella barra inferiore per cambiare
+  lingua al volo; preferenza salvata in `QSettings`.
+- Nuovo modulo `i18n.py` con dizionario completo (~120 stringhe) per italiano e inglese.
+- Tab *Info / About* con contenuto tradotto in entrambe le lingue.
+- Fix `NameError: info_browser` in `setup_ui`.
+
 ## Novità v5.1
 
 - Fix caricamento Google Sheets su QGIS 4 (*urllib* gestisce i redirect HTTP).
@@ -95,6 +103,13 @@ La barra inferiore contiene: **Aggiungi layer virtuale di punti e la relativa ta
 Script Python per QGIS sviluppato attraverso una collaborazione **human-Claude AI (Anthropic)** e **chatbot Z.ai**,
 che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazione del codice e l'implementazione
 di funzionalità avanzate.
+
+### v5.2 — Dettagli tecnici
+
+- Modulo `i18n.py`: dizionari `STRINGS["it"]` e `STRINGS["en"]`, funzione `tr(key, *args)`,
+  `set_language()` / `get_language()` con persistenza in `QSettings`.
+- `retranslate_ui()`: lista `self._tr` di lambda che aggiornano tutti i widget al cambio lingua.
+- Pulsante **🌐 IT/EN** integrato nella barra pulsanti principale, sempre visibile.
 
 ### v5.1 — Dettagli tecnici
 
@@ -142,6 +157,7 @@ geopoint_manager/
 ├── __init__.py                  # Entry point QGIS (classFactory)
 ├── plugin.py                    # Classe principale: toolbar, menu, provider
 ├── geopoint_manager_dialog.py   # Logica principale, UI, algoritmo Processing
+├── i18n.py                      # Modulo internazionalizzazione ITA/EN
 ├── metadata.txt                 # Metadati plugin (nome, versione, dipendenze)
 ├── icons/
 │   └── icon.svg                 # Icona plugin

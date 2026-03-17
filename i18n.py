@@ -48,7 +48,7 @@ def tr(key, *args, **kwargs):
 
 _INFO_HTML_IT = """
 <html><body style="font-family: sans-serif; font-size: 13px; padding: 8px;">
-<h2 style="color:#2196F3;">GeoPoint Manager v5.1</h2>
+<h2 style="color:#2196F3;">GeoPoint Manager v5.2</h2>
 <p>Plugin QGIS per creare <b>layer vettoriali di punti</b> a partire da sorgenti dati contenenti
 campi di coordinate geografiche (latitudine/longitudine).</p>
 <p><b>Compatibilità:</b> QGIS 3.16+ / 4.x &nbsp;|&nbsp; <b>Licenza:</b> GPL-2.0+<br>
@@ -86,13 +86,18 @@ campi di coordinate geografiche (latitudine/longitudine).</p>
   <tr><td><b>Info / About</b></td><td>Documentazione del plugin.</td></tr>
 </table>
 <hr>
+<h3>Novità v5.2</h3>
+<ul>
+  <li><b>Interfaccia bilingue ITA / EN</b> — pulsante <b>🌐 IT/EN</b> nella barra inferiore per cambiare lingua al volo.</li>
+  <li>Nuovo modulo <code>i18n.py</code> con ~120 stringhe tradotte.</li>
+  <li>Fix <code>NameError: info_browser</code> in <code>setup_ui</code>.</li>
+</ul>
 <h3>Novità v5.1</h3>
 <ul>
   <li>Fix caricamento Google Sheets su QGIS 4 (<i>urllib</i> gestisce i redirect HTTP).</li>
   <li>Storage persistente basato su GeoPackage per i dati scaricati.</li>
   <li>Refresh manuale on-demand.</li>
   <li>Compatibilità Qt5/PyQt5 (QGIS 3) e Qt6/PyQt6 (QGIS 4).</li>
-  <li>Supporto bilingue ITA / EN con switch nell'interfaccia.</li>
 </ul>
 <hr>
 <p>by <a href="https://github.com/gbvitrano">@gbvitrano</a> —
@@ -104,7 +109,7 @@ Repository: <a href="https://github.com/gbvitrano/geopoint_manager">github.com/g
 
 _INFO_HTML_EN = """
 <html><body style="font-family: sans-serif; font-size: 13px; padding: 8px;">
-<h2 style="color:#2196F3;">GeoPoint Manager v5.1</h2>
+<h2 style="color:#2196F3;">GeoPoint Manager v5.2</h2>
 <p>QGIS plugin to create <b>point vector layers</b> from data sources containing
 geographic coordinate fields (latitude/longitude).</p>
 <p><b>Compatibility:</b> QGIS 3.16+ / 4.x &nbsp;|&nbsp; <b>License:</b> GPL-2.0+<br>
@@ -142,13 +147,18 @@ geographic coordinate fields (latitude/longitude).</p>
   <tr><td><b>Info / About</b></td><td>Plugin documentation.</td></tr>
 </table>
 <hr>
+<h3>What's new in v5.2</h3>
+<ul>
+  <li><b>Bilingual ITA / EN interface</b> — <b>🌐 IT/EN</b> button in the bottom bar to switch language on the fly.</li>
+  <li>New <code>i18n.py</code> module with ~120 translated strings.</li>
+  <li>Fix <code>NameError: info_browser</code> in <code>setup_ui</code>.</li>
+</ul>
 <h3>What's new in v5.1</h3>
 <ul>
   <li>Fixed Google Sheets loading on QGIS 4 (<i>urllib</i> handles HTTP redirects).</li>
   <li>Persistent GeoPackage-based storage for downloaded data.</li>
   <li>Manual on-demand refresh.</li>
   <li>Qt5/PyQt5 (QGIS 3) and Qt6/PyQt6 (QGIS 4) compatibility.</li>
-  <li>Bilingual ITA / EN support with in-UI language switch.</li>
 </ul>
 <hr>
 <p>by <a href="https://github.com/gbvitrano">@gbvitrano</a> —
@@ -165,7 +175,7 @@ Repository: <a href="https://github.com/gbvitrano/geopoint_manager">github.com/g
 STRINGS = {
     "it": {
         # Window titles
-        "main_title":             "GeoPoint Manager - v5.1",
+        "main_title":             "GeoPoint Manager - v5.2",
         "coord_dialog_title":     "Seleziona Campi Coordinate e Colonne",
         "refresh_dialog_title":   "Aggiorna sorgenti Google Sheets",
         "gs_help_dialog_title":   "Guida Google Sheets CSV",
@@ -250,12 +260,12 @@ STRINGS = {
         "export_btn_tooltip": "Apre il dialogo nativo di QGIS per esportare in tutti i formati supportati",
         "quick_save_btn":     "Salva GPKG",
         "quick_save_tooltip": "Salvataggio rapido come GeoPackage",
-        "footer":             "GeoPoint Manager - v5.1",
+        "footer":             "GeoPoint Manager - v5.2",
         # Language button
         "lang_btn":         "🌐 EN",
         "lang_btn_tooltip": "Switch to English / Passa all'inglese",
         # Log
-        "log_ready":        "GeoPoint Manager v5.1 pronto - Google Sheets → GeoPackage, aggiornamento manuale on-demand...",
+        "log_ready":        "GeoPoint Manager v5.2 pronto - Google Sheets → GeoPackage, aggiornamento manuale on-demand...",
         "log_mode_ogr":     "Modalità: Caricamento dati da URL",
         "log_mode_layer":   "Modalità: Layer dal progetto QGIS",
         "log_fields_updated": "Campi aggiornati",
@@ -308,7 +318,7 @@ STRINGS = {
         "gpkg_opened_sources_n": "GeoPackage aperto: {} sorgenti registrate → {}",
         "gpkg_opened_no_sources":"GeoPackage aperto — nessuna sorgente Google Sheets registrata",
         # Processing
-        "processing_help": "<h3>GeoPoint Manager v5.1</h3><p>Plugin per creare layer di punti da sorgenti dati con coordinate</p>",
+        "processing_help": "<h3>GeoPoint Manager v5.2</h3><p>Plugin per creare layer di punti da sorgenti dati con coordinate</p>",
         "processing_long_name": "GeoPoint Manager - Strumenti per la gestione di punti geografici",
         # About
         "info_html": _INFO_HTML_IT,
@@ -316,7 +326,7 @@ STRINGS = {
 
     "en": {
         # Window titles
-        "main_title":             "GeoPoint Manager - v5.1",
+        "main_title":             "GeoPoint Manager - v5.2",
         "coord_dialog_title":     "Select Coordinate Fields and Columns",
         "refresh_dialog_title":   "Update Google Sheets Sources",
         "gs_help_dialog_title":   "Google Sheets CSV Guide",
@@ -401,12 +411,12 @@ STRINGS = {
         "export_btn_tooltip": "Opens the native QGIS dialog to export in all supported formats",
         "quick_save_btn":     "Save GPKG",
         "quick_save_tooltip": "Quick save as GeoPackage",
-        "footer":             "GeoPoint Manager - v5.1",
+        "footer":             "GeoPoint Manager - v5.2",
         # Language button
         "lang_btn":         "🌐 IT",
         "lang_btn_tooltip": "Passa all'italiano / Switch to Italian",
         # Log
-        "log_ready":          "GeoPoint Manager v5.1 ready - Google Sheets → GeoPackage, manual on-demand update...",
+        "log_ready":          "GeoPoint Manager v5.2 ready - Google Sheets → GeoPackage, manual on-demand update...",
         "log_mode_ogr":       "Mode: Loading data from URL",
         "log_mode_layer":     "Mode: Layer from QGIS project",
         "log_fields_updated": "Fields updated",
@@ -459,7 +469,7 @@ STRINGS = {
         "gpkg_opened_sources_n": "GeoPackage opened: {} sources registered → {}",
         "gpkg_opened_no_sources":"GeoPackage opened — no Google Sheets sources registered",
         # Processing
-        "processing_help": "<h3>GeoPoint Manager v5.1</h3><p>Plugin to create point layers from data sources with coordinates</p>",
+        "processing_help": "<h3>GeoPoint Manager v5.2</h3><p>Plugin to create point layers from data sources with coordinates</p>",
         "processing_long_name": "GeoPoint Manager - Tools for geographic point management",
         # About
         "info_html": _INFO_HTML_EN,

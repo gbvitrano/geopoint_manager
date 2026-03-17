@@ -2,18 +2,18 @@
 name=GeoPoint Manager
 qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
-description=Crea layer di punti da sorgenti dati con coordinate (URL, Google Sheets, CSV, GeoJSON, layer esistenti). Compatibile con QGIS 3 e QGIS 4.
-version=5.1
+description=Crea layer di punti da sorgenti dati con coordinate (URL, Google Sheets, CSV, GeoJSON, layer esistenti). Interfaccia bilingue ITA/EN. Compatibile con QGIS 3 e QGIS 4.
+version=5.2
 author=gbvitrano
 email=gbvitrano@gmail.com
 
-about=GeoPoint Manager consente di creare layer vettoriali di punti partendo da sorgenti dati che contengono campi coordinate (latitudine/longitudine). Supporta URL OGR/GDAL, Google Sheets (tramite CSV export), GeoJSON, WFS e layer QGIS già caricati nel progetto. Novità v5.1: fix caricamento Google Sheets su QGIS 4, aggiornamento manuale on-demand, compatibilità Qt5/Qt6.
+about=GeoPoint Manager consente di creare layer vettoriali di punti partendo da sorgenti dati con campi coordinate (lat/lon). Supporta URL OGR/GDAL, Google Sheets, GeoJSON, WFS e layer QGIS esistenti. Interfaccia bilingue ITA/EN con switch al volo. v5.2: fix NameError info_browser, pulsante lingua nella toolbar principale. v5.1: fix Google Sheets su QGIS 4, GeoPackage persistente, refresh manuale, compatibilità Qt5/Qt6.
 
 tracker=https://github.com/gbvitrano/geopoint_manager/issues
 repository=https://github.com/gbvitrano/geopoint_manager
 
 hasProcessingProvider=yes
-tags=points, coordinates, csv, google sheets, geojson, wfs, ogr, import, lat, lon
+tags=points, coordinates, csv, google sheets, geojson, wfs, ogr, import, lat, lon, bilingual, i18n
 category=Vector
 icon=icons/icon.svg
 experimental=False
@@ -21,6 +21,8 @@ deprecated=False
 server=False
 
 changelog=
+  5.2 - Interfaccia bilingue ITA/EN con pulsante switch nella toolbar principale (i18n.py),
+        fix NameError info_browser in setup_ui
   5.1 - Fix caricamento Google Sheets su QGIS 4 (download via urllib + salvataggio GeoPackage),
         aggiornamento manuale on-demand, compatibilità QGIS 3 (Qt5/PyQt5) e QGIS 4 (Qt6/PyQt6)
   5.0 - Prima release come plugin installabile

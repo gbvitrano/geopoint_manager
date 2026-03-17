@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Script QGIS - GeoPoint Manager v5.1
+Script QGIS - GeoPoint Manager v5.2
 Plugin per creare layer di punti da sorgenti dati con coordinate
 NOVITÀ v5.1: Fix caricamento Google Sheets su QGIS 4 (download via urllib + salvataggio GeoPackage),
              aggiornamento manuale on-demand, compatibilità QGIS 3 (Qt5/PyQt5) e QGIS 4 (Qt6/PyQt6)
@@ -2255,7 +2255,7 @@ class GeoPointManagerAlgorithm(QgsProcessingAlgorithm):
         return 'geopointmanager'
     
     def displayName(self):
-        return 'GeoPoint Manager - v5.1'
+        return 'GeoPoint Manager - v5.2'
     
     def group(self):
         return 'GeoPoint Manager'
