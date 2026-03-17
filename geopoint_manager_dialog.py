@@ -14,6 +14,7 @@ import urllib.request
 import urllib.error
 import tempfile
 from qgis.core import Qgis
+from .i18n import tr, set_language, get_language
 
 # --- Rilevazione versione QGIS per compatibilità Qt5/Qt6 ---
 _QGIS4 = Qgis.versionInt() >= 40000
@@ -243,14 +244,14 @@ class CoordinateFieldsDialog(QDialog):
         self.setup_ui()
 
     def setup_ui(self):
-        self.setWindowTitle("Seleziona Campi Coordinate e Colonne")
+        self.setWindowTitle(tr("coord_dialog_title"))
         self.setMinimumSize(460, 420)
         self.resize(460, 520)
 
         layout = QVBoxLayout()
 
         # Titolo
-        title = QLabel("Seleziona i campi per le coordinate:")
+        title = QLabel(tr("coord_select_title"))
         title_font = QFont()
         title_font.setPointSize(11)
         title_font.setBold(True)
@@ -258,10 +259,8 @@ class CoordinateFieldsDialog(QDialog):
         layout.addWidget(title)
 
         # Info campi
-        info_label = QLabel(
-            f"Campi disponibili: {', '.join(self.available_fields[:5])}"
-            f"{'...' if len(self.available_fields) > 5 else ''}"
-        )
+        preview = ', '.join(self.available_fields[:5]) + ('...' if len(self.available_fields) > 5 else '')
+        info_label = QLabel(tr("coord_available_fields", preview))
         info_label.setWordWrap(True)
         info_label.setStyleSheet(f"color: {_Theme.text_muted}; font-size: 9pt; margin-bottom: 4px;")
         layout.addWidget(info_label)
@@ -270,13 +269,13 @@ class CoordinateFieldsDialog(QDialog):
         form_layout = QFormLayout()
         self.lat_combo = QComboBox()
         self.lat_combo.addItems(self.available_fields)
-        form_layout.addRow("Campo Latitudine (Y):", self.lat_combo)
+        form_layout.addRow(tr("coord_lat_field"), self.lat_combo)
         self.lon_combo = QComboBox()
         self.lon_combo.addItems(self.available_fields)
-        form_layout.addRow("Campo Longitudine (X):", self.lon_combo)
+        form_layout.addRow(tr("coord_lon_field"), self.lon_combo)
         layout.addLayout(form_layout)
 
-        note_label = QLabel("I valori devono essere coordinate decimali (es: 45.123, 12.456)")
+        note_label = QLabel(tr("coord_decimal_note"))
         note_label.setWordWrap(True)
         note_label.setStyleSheet(f"color: {_Theme.text_subtle}; font-size: 8pt; font-style: italic; margin: 6px 0;")
         layout.addWidget(note_label)
@@ -288,19 +287,19 @@ class CoordinateFieldsDialog(QDialog):
         layout.addWidget(sep)
 
         # Sezione selezione colonne
-        col_title = QLabel("Colonne da includere nel layer virtuale:")
+        col_title = QLabel(tr("coord_columns_title"))
         col_title_font = QFont()
         col_title_font.setBold(True)
         col_title.setFont(col_title_font)
         layout.addWidget(col_title)
 
-        col_note = QLabel("Deseleziona le colonne che non ti servono. I campi coordinate sono sempre inclusi.")
+        col_note = QLabel(tr("coord_columns_note"))
         col_note.setWordWrap(True)
         col_note.setStyleSheet(f"color: {_Theme.text_muted}; font-size: 8pt; margin-bottom: 4px;")
         layout.addWidget(col_note)
 
         # "Seleziona tutte" checkbox
-        self._select_all_cb = QCheckBox("Seleziona tutte")
+        self._select_all_cb = QCheckBox(tr("select_all"))
         self._select_all_cb.setChecked(True)
         self._select_all_cb.stateChanged.connect(self._on_select_all_changed)
         layout.addWidget(self._select_all_cb)
@@ -334,21 +333,21 @@ class CoordinateFieldsDialog(QDialog):
         layout.addWidget(self._col_list)
 
         # Contatore
-        self._col_count_label = QLabel(f"{len(self.available_fields)} colonne selezionate")
+        self._col_count_label = QLabel(tr("col_count", len(self.available_fields)))
         self._col_count_label.setStyleSheet("font-size: 9pt; font-weight: bold;")
         layout.addWidget(self._col_count_label)
 
         # Pulsanti
         button_layout = QHBoxLayout()
-        self.auto_btn = QPushButton("Auto-detect coordinate")
+        self.auto_btn = QPushButton(tr("auto_detect_btn"))
         self.auto_btn.clicked.connect(self.auto_detect_fields)
         button_layout.addWidget(self.auto_btn)
         button_layout.addStretch()
-        self.ok_btn = QPushButton("OK")
+        self.ok_btn = QPushButton(tr("ok"))
         self.ok_btn.clicked.connect(self.accept)
         self.ok_btn.setDefault(True)
         button_layout.addWidget(self.ok_btn)
-        self.cancel_btn = QPushButton("Annulla")
+        self.cancel_btn = QPushButton(tr("cancel"))
         self.cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(self.cancel_btn)
         layout.addLayout(button_layout)
@@ -382,7 +381,7 @@ class CoordinateFieldsDialog(QDialog):
     def _update_col_count(self):
         n = sum(1 for i in range(self._col_list.count())
                 if self._col_list.item(i).checkState() == _Qt_Checked)
-        self._col_count_label.setText(f"{n} colonne selezionate")
+        self._col_count_label.setText(tr("col_count", n))
 
     def auto_detect_fields(self):
         """Rileva automaticamente i campi coordinate."""
@@ -426,7 +425,7 @@ class RefreshSourcesDialog(QDialog):
     def __init__(self, sources, parent=None):
         # sources: list of (layer_name, url, last_updated)
         super().__init__(parent)
-        self.setWindowTitle("Aggiorna sorgenti Google Sheets")
+        self.setWindowTitle(tr("refresh_dialog_title"))
         self.setMinimumWidth(600)
         self._checkboxes = []
         self._setup_ui(sources)
@@ -434,8 +433,10 @@ class RefreshSourcesDialog(QDialog):
     def _setup_ui(self, sources):
         layout = QVBoxLayout()
 
-        header = QLabel(f"<b>{len(sources)} sorgent{'e' if len(sources)==1 else 'i'} registrat{'a' if len(sources)==1 else 'e'} nel GeoPackage.</b><br>"
-                        "Seleziona i layer da risincronizzare con Google Sheets:")
+        n = len(sources)
+        header_key = "refresh_header_1" if n == 1 else "refresh_header_n"
+        header_text = tr(header_key) if n == 1 else tr(header_key, n)
+        header = QLabel(header_text)
         header.setWordWrap(True)
         layout.addWidget(header)
 
@@ -444,8 +445,7 @@ class RefreshSourcesDialog(QDialog):
             short_url = url[:70] + "..." if len(url) > 70 else url
             cb = QCheckBox(f"  {layer_name}")
             cb.setChecked(True)
-            cb.setToolTip(f"URL: {url}\nUltimo aggiornamento: {last_updated or 'n/d'}")
-            # etichetta URL sotto il checkbox
+            cb.setToolTip(tr("last_updated_tooltip", url, last_updated or "n/d"))
             url_lbl = QLabel(f"    <span style='color:{_Theme.text_muted}; font-size:8pt;'>{short_url}</span>")
             url_lbl.setTextFormat(Qt.TextFormat.RichText)
             layout.addWidget(cb)
@@ -455,9 +455,9 @@ class RefreshSourcesDialog(QDialog):
         layout.addSpacing(8)
 
         btn_layout = QHBoxLayout()
-        select_all_btn = QPushButton("Seleziona tutti")
+        select_all_btn = QPushButton(tr("select_all_btn"))
         select_all_btn.clicked.connect(lambda: [cb.setChecked(True) for cb, *_ in self._checkboxes])
-        select_none_btn = QPushButton("Deseleziona tutti")
+        select_none_btn = QPushButton(tr("deselect_all_btn"))
         select_none_btn.clicked.connect(lambda: [cb.setChecked(False) for cb, *_ in self._checkboxes])
         btn_layout.addWidget(select_all_btn)
         btn_layout.addWidget(select_none_btn)
@@ -467,10 +467,10 @@ class RefreshSourcesDialog(QDialog):
         layout.addSpacing(4)
 
         action_layout = QHBoxLayout()
-        update_btn = QPushButton("↻  Aggiorna selezionati")
+        update_btn = QPushButton(tr("update_selected_btn"))
         update_btn.setStyleSheet(f"background-color:#FF9800; color:white; font-weight:bold; padding:6px 14px; border:none; border-radius:4px;")
         update_btn.clicked.connect(self.accept)
-        cancel_btn = QPushButton("Annulla")
+        cancel_btn = QPushButton(tr("cancel"))
         cancel_btn.clicked.connect(self.reject)
         action_layout.addStretch()
         action_layout.addWidget(update_btn)
@@ -512,7 +512,7 @@ class CheckableComboBox(QWidget):
         layout.setSpacing(0)
 
         # Pulsante principale
-        self._btn = QPushButton("0 colonne selezionate  ▾")
+        self._btn = QPushButton(tr("combo_n_cols", 0))
         _sp_exp   = QSizePolicy.Policy.Expanding if _QGIS4 else QSizePolicy.Expanding
         _sp_fixed = QSizePolicy.Policy.Fixed     if _QGIS4 else QSizePolicy.Fixed
         self._btn.setSizePolicy(_sp_exp, _sp_fixed)
@@ -529,7 +529,7 @@ class CheckableComboBox(QWidget):
         popup_layout.setSpacing(2)
 
         # "Seleziona tutte"
-        self._select_all_cb = QCheckBox("Seleziona tutte")
+        self._select_all_cb = QCheckBox(tr("select_all"))
         self._select_all_cb.setChecked(True)
         self._select_all_cb.stateChanged.connect(self._on_select_all_changed)
         popup_layout.addWidget(self._select_all_cb)
@@ -545,17 +545,17 @@ class CheckableComboBox(QWidget):
         bar = QWidget()
         bar_layout = QHBoxLayout(bar)
         bar_layout.setContentsMargins(0, 2, 0, 0)
-        self._count_label = QLabel("0 Colonne selezionate")
+        self._count_label = QLabel(tr("combo_n_cols_label", 0))
         self._count_label.setStyleSheet("font-size: 9pt; font-weight: bold;")
         bar_layout.addWidget(self._count_label, 1)
         clear_btn = QPushButton("✕")
         clear_btn.setFixedSize(24, 24)
-        clear_btn.setToolTip("Deseleziona tutte")
+        clear_btn.setToolTip(tr("deselect_all_tooltip"))
         clear_btn.clicked.connect(self._clear_all)
         bar_layout.addWidget(clear_btn)
         close_btn = QPushButton("▲")
         close_btn.setFixedSize(24, 24)
-        close_btn.setToolTip("Chiudi")
+        close_btn.setToolTip(tr("close_popup_tooltip"))
         close_btn.clicked.connect(self._popup.hide)
         bar_layout.addWidget(close_btn)
         popup_layout.addWidget(bar)
@@ -657,9 +657,8 @@ class CheckableComboBox(QWidget):
 
     def _update_display(self):
         n = len(self.checkedItems())
-        total = self._list.count()
-        self._btn.setText(f"{n} colonne selezionate  ▾")
-        self._count_label.setText(f"{n} Colonne selezionate")
+        self._btn.setText(tr("combo_n_cols", n))
+        self._count_label.setText(tr("combo_n_cols_label", n))
 
 
 class GeoPointManagerDialog(QDialog):
@@ -667,9 +666,10 @@ class GeoPointManagerDialog(QDialog):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("GeoPoint Manager - v5.1")
+        self.setWindowTitle(tr("main_title"))
         self.setMinimumSize(640, 600)
         self.resize(800, 750)
+        self._tr = []  # list of callables for retranslate_ui()
 
         # Rimuove cornici inutili, lascia solo quella del tab attivo
         self.setStyleSheet("""
@@ -848,14 +848,18 @@ class GeoPointManagerDialog(QDialog):
         ogr_content = QWidget()
         ogr_layout = QVBoxLayout(ogr_content)
         
-        ogr_layout.addWidget(QLabel("URL sorgente dati:"))
+        self._url_source_lbl = QLabel(tr("url_source_label"))
+        ogr_layout.addWidget(self._url_source_lbl)
+        self._tr.append(lambda: self._url_source_lbl.setText(tr("url_source_label")))
         self.ogr_url_edit = QLineEdit()
-        self.ogr_url_edit.setPlaceholderText("Link tipo per Google Sheets - https://docs.google.com/spreadsheets/d/[ID_DEL_FILE]/export?format=csv&gid=[ID_DEL_FOGLIO]")
+        self.ogr_url_edit.setPlaceholderText(tr("url_placeholder"))
+        self._tr.append(lambda: self.ogr_url_edit.setPlaceholderText(tr("url_placeholder")))
         ogr_layout.addWidget(self.ogr_url_edit)
-        
+
         # Guida Google Sheets
         gs_help_layout = QHBoxLayout()
-        self.gs_help_btn = self.create_icon_button("Google Sheets", "?", "Guida per Google Sheets CSV", (140, 30))
+        self.gs_help_btn = self.create_icon_button(tr("gs_help_btn"), "?", tr("gs_help_tooltip"), (140, 30))
+        self._tr.append(lambda: self.gs_help_btn.setText(f"? {tr('gs_help_btn')}") or self.gs_help_btn.setToolTip(tr("gs_help_tooltip")))
         self.gs_help_btn.clicked.connect(self.show_google_sheets_help)
         gs_help_layout.addWidget(self.gs_help_btn)
         gs_help_layout.addStretch()
@@ -863,7 +867,9 @@ class GeoPointManagerDialog(QDialog):
         
         # Formato e Nome Layer layout
         format_name_layout = QHBoxLayout()
-        format_name_layout.addWidget(QLabel("Formato:"))
+        self._format_lbl = QLabel(tr("format_label"))
+        format_name_layout.addWidget(self._format_lbl)
+        self._tr.append(lambda: self._format_lbl.setText(tr("format_label")))
         self.ogr_format_combo = QComboBox()
         self.ogr_format_combo.addItems([
             "Auto-detect", "GeoJSON", "WFS", "Shapefile (ZIP)", 
@@ -872,10 +878,13 @@ class GeoPointManagerDialog(QDialog):
         format_name_layout.addWidget(self.ogr_format_combo)
         
         # NUOVO: Campo per nome layer personalizzato
-        format_name_layout.addWidget(QLabel("Nome:"))
+        self._name_lbl = QLabel(tr("name_label"))
+        format_name_layout.addWidget(self._name_lbl)
+        self._tr.append(lambda: self._name_lbl.setText(tr("name_label")))
         self.ogr_layer_custom_name = QLineEdit()
-        self.ogr_layer_custom_name.setPlaceholderText("Nome layer personalizzato")
-        self.ogr_layer_custom_name.setToolTip("Nome personalizzato per il layer (opzionale)")
+        self.ogr_layer_custom_name.setPlaceholderText(tr("layer_custom_name_placeholder"))
+        self.ogr_layer_custom_name.setToolTip(tr("layer_custom_name_tooltip"))
+        self._tr.append(lambda: self.ogr_layer_custom_name.setPlaceholderText(tr("layer_custom_name_placeholder")) or self.ogr_layer_custom_name.setToolTip(tr("layer_custom_name_tooltip")))
         format_name_layout.addWidget(self.ogr_layer_custom_name)
         
         format_name_layout.addStretch()
@@ -885,13 +894,15 @@ class GeoPointManagerDialog(QDialog):
         mode_group = QWidget()
         mode_layout = QHBoxLayout()
 
-        self.table_only_radio = QRadioButton("Solo tabella dati")
+        self.table_only_radio = QRadioButton(tr("table_only_radio"))
         self.table_only_radio.setChecked(False)
-        self.table_only_radio.setToolTip("Scarica i dati come layer tabellare senza mappatura automatica")
+        self.table_only_radio.setToolTip(tr("table_only_tooltip"))
+        self._tr.append(lambda: self.table_only_radio.setText(tr("table_only_radio")) or self.table_only_radio.setToolTip(tr("table_only_tooltip")))
 
-        self.direct_points_radio = QRadioButton("Aggiungi tabella dati e layer virtuale")
+        self.direct_points_radio = QRadioButton(tr("direct_points_radio"))
         self.direct_points_radio.setChecked(True)
-        self.direct_points_radio.setToolTip("Crea automaticamente il layer di punti mappando i campi coordinate")
+        self.direct_points_radio.setToolTip(tr("direct_points_tooltip"))
+        self._tr.append(lambda: self.direct_points_radio.setText(tr("direct_points_radio")) or self.direct_points_radio.setToolTip(tr("direct_points_tooltip")))
 
         mode_layout.addWidget(self.direct_points_radio)
         mode_layout.addWidget(self.table_only_radio)
@@ -900,7 +911,8 @@ class GeoPointManagerDialog(QDialog):
         ogr_layout.addWidget(mode_group)
         
         # Opzioni avanzate (collassabile)
-        self.ogr_options_group = QGroupBox("Opzioni Avanzate")
+        self.ogr_options_group = QGroupBox(tr("advanced_options_title"))
+        self._tr.append(lambda: self.ogr_options_group.setTitle(tr("advanced_options_title")))
 
         ogr_options_layout = QGridLayout()
 
@@ -935,15 +947,18 @@ class GeoPointManagerDialog(QDialog):
         gpkg_layout = QVBoxLayout()
         gpkg_layout.setContentsMargins(0, 0, 0, 0)
         gpkg_layout.setSpacing(2)
-        gpkg_label = QLabel("Salva dati come GeoPackage (richiesto per Google Sheets):")
-        gpkg_label.setStyleSheet(f"color: {_Theme.text_muted}; font-size: 9pt;")
-        gpkg_layout.addWidget(gpkg_label)
+        self._gpkg_save_lbl = QLabel(tr("gpkg_save_label"))
+        self._gpkg_save_lbl.setStyleSheet(f"color: {_Theme.text_muted}; font-size: 9pt;")
+        gpkg_layout.addWidget(self._gpkg_save_lbl)
+        self._tr.append(lambda: self._gpkg_save_lbl.setText(tr("gpkg_save_label")))
         gpkg_row = QHBoxLayout()
         self.gpkg_path_edit = QLineEdit()
-        self.gpkg_path_edit.setPlaceholderText("Percorso file .gpkg — lascia vuoto per scegliere al caricamento")
-        self.gpkg_path_edit.setToolTip("Percorso GeoPackage in cui salvare i dati scaricati da Google Sheets")
+        self.gpkg_path_edit.setPlaceholderText(tr("gpkg_path_placeholder"))
+        self.gpkg_path_edit.setToolTip(tr("gpkg_path_tooltip"))
+        self._tr.append(lambda: self.gpkg_path_edit.setPlaceholderText(tr("gpkg_path_placeholder")) or self.gpkg_path_edit.setToolTip(tr("gpkg_path_tooltip")))
         gpkg_row.addWidget(self.gpkg_path_edit)
-        self.gpkg_browse_btn = QPushButton("Sfoglia...")
+        self.gpkg_browse_btn = QPushButton(tr("browse"))
+        self._tr.append(lambda: self.gpkg_browse_btn.setText(tr("browse")))
         self.gpkg_browse_btn.setFixedWidth(80)
         self.gpkg_browse_btn.clicked.connect(self._browse_gpkg_path)
         gpkg_row.addWidget(self.gpkg_browse_btn)
@@ -952,22 +967,25 @@ class GeoPointManagerDialog(QDialog):
         ogr_layout.addWidget(gpkg_group)
 
         # Pulsante carica
-        self.load_ogr_btn = self.create_large_button("Carica dati OGR/GDAL", "#9C27B0", 10)
+        self.load_ogr_btn = self.create_large_button(tr("load_ogr_btn"), "#9C27B0", 10)
+        self._tr.append(lambda: self.load_ogr_btn.setText(tr("load_ogr_btn")))
         self.load_ogr_btn.clicked.connect(self.load_ogr_data)
         ogr_layout.addWidget(self.load_ogr_btn)
 
         # Riga: [ Sfoglia GeoPackage esistente ] [ ↻ Aggiorna dati da Google Sheets ]
         refresh_row = QHBoxLayout()
 
-        self.gpkg_open_btn = self.create_large_button("📂  Apri GeoPackage esistente", "#757575", 10)
-        self.gpkg_open_btn.setToolTip("Seleziona un GeoPackage già esistente per aggiornarne i layer")
+        self.gpkg_open_btn = self.create_large_button(tr("open_gpkg_btn"), "#757575", 10)
+        self.gpkg_open_btn.setToolTip(tr("open_gpkg_tooltip"))
+        self._tr.append(lambda: self.gpkg_open_btn.setText(tr("open_gpkg_btn")) or self.gpkg_open_btn.setToolTip(tr("open_gpkg_tooltip")))
         self.gpkg_open_btn.clicked.connect(self._open_existing_gpkg)
         refresh_row.addWidget(self.gpkg_open_btn)
 
-        self.refresh_gs_btn = self.create_large_button("↻  Aggiorna da Google Sheets", "#FF9800", 10)
+        self.refresh_gs_btn = self.create_large_button(tr("refresh_gs_btn"), "#FF9800", 10)
         self.refresh_gs_btn.clicked.connect(self._refresh_google_sheets_manual)
         self.refresh_gs_btn.setEnabled(False)
-        self.refresh_gs_btn.setToolTip("Legge la registry dal GeoPackage e aggiorna i layer registrati")
+        self.refresh_gs_btn.setToolTip(tr("refresh_gs_tooltip"))
+        self._tr.append(lambda: self.refresh_gs_btn.setText(tr("refresh_gs_btn")) or self.refresh_gs_btn.setToolTip(tr("refresh_gs_tooltip")))
         refresh_row.addWidget(self.refresh_gs_btn)
 
         ogr_layout.addLayout(refresh_row)
@@ -980,130 +998,31 @@ class GeoPointManagerDialog(QDialog):
         ogr_tab_layout = QVBoxLayout(self.ogr_tab)
         ogr_tab_layout.addWidget(ogr_scroll)
         
-        self.source_tabs.addTab(self.ogr_tab, "Dati OGR/GDAL")  # PRIMA SCHEDA
+        self.source_tabs.addTab(self.ogr_tab, tr("tab_ogr"))  # PRIMA SCHEDA
+        self._tr.append(lambda: self.source_tabs.setTabText(0, tr("tab_ogr")))
         
         # === TAB 2: LAYER QGIS (SECONDA SCHEDA) ===
         self.layer_tab = QWidget()
         layer_layout = QVBoxLayout()
         
-        layer_layout.addWidget(QLabel("Seleziona un layer vettoriale dal progetto:"))
+        self._select_layer_lbl = QLabel(tr("select_layer_label"))
+        layer_layout.addWidget(self._select_layer_lbl)
+        self._tr.append(lambda: self._select_layer_lbl.setText(tr("select_layer_label")))
         self.layer_combo = QComboBox()
         layer_layout.addWidget(self.layer_combo)
         # fields_group verrà aggiunto qui sotto dopo la sua creazione
         self.layer_tab.setLayout(layer_layout)
-        self.source_tabs.addTab(self.layer_tab, "Dati da layer QGIS")  # SECONDA SCHEDA
+        self.source_tabs.addTab(self.layer_tab, tr("tab_layer"))  # SECONDA SCHEDA
+        self._tr.append(lambda: self.source_tabs.setTabText(1, tr("tab_layer")))
 
         # === TAB 3: INFO / ABOUT (TERZA SCHEDA) ===
         self.info_tab = QWidget()
         info_tab_layout = QVBoxLayout(self.info_tab)
 
-        info_browser = QTextBrowser()
-        info_browser.setOpenExternalLinks(True)
-        info_browser.setHtml("""
-<html><body style="font-family: sans-serif; font-size: 13px; padding: 8px;">
-
-<h2 style="color:#2196F3;">GeoPoint Manager v5.1</h2>
-<p>Plugin QGIS per creare <b>layer vettoriali di punti</b> a partire da sorgenti dati contenenti
-campi di coordinate geografiche (latitudine/longitudine).</p>
-<p><b>Compatibilità:</b> QGIS 3.16+ / 4.x &nbsp;|&nbsp; <b>Licenza:</b> GPL-2.0+<br>
-<b>Autori:</b> @gbvitrano, Claude AI (Anthropic)</p>
-
-<hr>
-<h3>Sorgenti dati supportate</h3>
-<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse; width:100%;">
-  <tr style="background:#e3f2fd;"><th>Sorgente</th><th>Note</th></tr>
-  <tr><td><b>Google Sheets</b></td><td>Download diretto via urllib, salvataggio in GeoPackage</td></tr>
-  <tr><td><b>URL OGR/GDAL</b></td><td>Fonti online generiche</td></tr>
-  <tr><td><b>WFS</b></td><td>Web Feature Services</td></tr>
-  <tr><td><b>GeoJSON, Shapefile (ZIP), KML/KMZ, GPX, CSV</b></td><td>File locali o remoti</td></tr>
-  <tr><td><b>Layer QGIS esistenti</b></td><td>Layer già caricati nel progetto corrente</td></tr>
-</table>
-
-<hr>
-<h3>Funzionalità principali</h3>
-<ol>
-  <li><b>Rilevamento automatico coordinate</b> — individua i campi lat/lon tramite keyword matching
-      (es. <code>lat</code>, <code>latitude</code>, <code>y</code>, <code>northing</code>,
-      <code>lon</code>, <code>lng</code>, <code>x</code>, <code>easting</code>…)</li>
-  <li><b>Virtual Layer dinamico</b> — crea layer virtuali QGIS con query SQL:<br>
-      <code style="background:#f5f5f5; padding:2px 4px;">
-      SELECT *, make_point(CAST(lon AS REAL), CAST(lat AS REAL)) as geometry
-      FROM source WHERE lon IS NOT NULL AND lat IS NOT NULL
-      </code></li>
-  <li><b>Google Sheets integration</b> — salva i CSV scaricati in un GeoPackage locale,
-      con registro persistente (<code>_geopoint_sources</code>) e refresh manuale on-demand.</li>
-  <li><b>Gestione CRS flessibile</b> — auto-rilevamento o forzatura del sistema di riferimento
-      (EPSG:4326, 3857, UTM e personalizzato).</li>
-  <li><b>Export multiplo</b> — GeoPackage, Shapefile, GeoJSON, KML, CSV.</li>
-  <li><b>Processing integration</b> — accessibile anche dal QGIS Processing Framework.</li>
-</ol>
-
-<hr>
-<h3>Interfaccia utente</h3>
-<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse; width:100%;">
-  <tr style="background:#e3f2fd;"><th>Tab</th><th>Descrizione</th></tr>
-  <tr><td><b>Tab 1 – Dati OGR/GDAL</b></td><td>Caricamento da URL (OGR/GDAL, Google Sheets, WFS…). Include Opzioni Avanzate (autenticazione, parametri, layer, CRS override) e salvataggio GeoPackage.</td></tr>
-  <tr><td><b>Tab 2 – Dati da layer QGIS</b></td><td>Caricamento da layer già presenti nel progetto. Include la sezione <i>Configurazione campi e CRS</i> per selezione campi X/Y, CRS, nome layer virtuale e selezione colonne da includere.</td></tr>
-  <tr><td><b>Tab 3 – Log</b></td><td>Storico delle operazioni con timestamp.</td></tr>
-  <tr><td><b>Tab 4 – Info / About</b></td><td>Documentazione del plugin.</td></tr>
-</table>
-<p>La barra inferiore contiene: <b>Aggiungi layer virtuale di punti</b>, <b>Esporta Layer…</b>, <b>Salva GPKG</b> e <b>Chiudi</b>.</p>
-
-<hr>
-<h3>Workflow tipici</h3>
-<h4>Flusso base</h4>
-<ol>
-  <li>Avvia il plugin (icona toolbar o menu Vettore).</li>
-  <li>Seleziona la sorgente dati (tab <i>Dati OGR/GDAL</i> o <i>Dati da layer QGIS</i>).</li>
-  <li>Inserisci l'URL o seleziona il layer.</li>
-  <li>I campi coordinate vengono rilevati automaticamente oppure si apre il dialogo <i>Seleziona Campi Coordinate e Colonne</i> per scegliere lat/lon e le colonne da includere nel layer virtuale.</li>
-  <li>Clicca <b>"Aggiungi layer virtuale di punti e la relativa tabella"</b>.</li>
-  <li>Esporta se necessario.</li>
-</ol>
-<h4>Google Sheets</h4>
-<ol>
-  <li>Condividi il foglio Google pubblicamente e copia l'URL di esportazione CSV.</li>
-  <li>Specifica il percorso del GeoPackage di destinazione.</li>
-  <li>Carica i dati; il plugin li salva localmente.</li>
-  <li>Per aggiornare: clicca <b>"↻ Aggiorna da Google Sheets"</b>.</li>
-</ol>
-
-<hr>
-<h3>Novità v5.1</h3>
-<ul>
-  <li>Fix caricamento Google Sheets su QGIS 4 (<i>urllib</i> gestisce i redirect HTTP).</li>
-  <li>Storage persistente basato su GeoPackage per i dati scaricati.</li>
-  <li>Refresh manuale on-demand al posto dell'auto-fetch.</li>
-  <li>Compatibilità Qt5/PyQt5 (QGIS 3) e Qt6/PyQt6 (QGIS 4) — fix enum <code>QSizePolicy</code>, <code>QFrame</code>, <code>Qt</code>.</li>
-  <li>Nuova struttura a 4 tab: <i>Dati OGR/GDAL</i>, <i>Dati da layer QGIS</i>, <i>Log</i>, <i>Info / About</i>.</li>
-  <li>Dialogo <i>Seleziona Campi Coordinate e Colonne</i>: permette di scegliere lat/lon <b>e</b> quali colonne includere nel layer virtuale, tutto in un unico passaggio.</li>
-  <li>Sezione <i>Configurazione campi e CRS</i> integrata nel tab <i>Dati da layer QGIS</i>.</li>
-  <li>Pulsanti <i>Esporta Layer</i> e <i>Salva GPKG</i> spostati nella barra inferiore, sempre visibili.</li>
-  <li>Layout pulito: rimossi i frame ridondanti, lasciato solo il bordo del tab widget.</li>
-  <li>Messaggi di errore e logging migliorati.</li>
-</ul>
-
-<hr>
-<h3>Sviluppo tecnico</h3>
-<p>Script Python per QGIS sviluppato attraverso una collaborazione <b>human-Claude AI (Anthropic)</b> e <b>chatbot Z.ai</b>,
-che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazione del codice e l'implementazione di funzionalità avanzate.</p>
-
-<h4>v5.1 — Dettagli tecnici</h4>
-<ul>
-  <li>Download Google Sheets via <i>urllib</i> con gestione redirect HTTP (QGIS 4 compatibility).</li>
-  <li>Dati salvati in <b>GeoPackage</b> scelto dall'utente, persistente tra le sessioni; registro sorgenti nella tabella <code>_geopoint_sources</code>.</li>
-  <li>Aggiornamento <b>manuale on-demand</b>: il pulsante <i>↻ Aggiorna da Google Sheets</i> riscarica il foglio e sovrascrive il GeoPackage.</li>
-  <li>Supporta entrambi i formati URL Google Sheets (<i>/pub?output=csv</i> e <i>/export?format=csv&amp;gid=…</i>).</li>
-  <li>Selezione colonne tramite <code>CheckableComboBox</code> nel dialogo coordinate — le colonne X/Y sono sempre incluse.</li>
-  <li>Fix Qt6: enum <code>QSizePolicy.Policy</code>, <code>QFrame.Shape</code>, <code>Qt.ItemFlag</code>, <code>Qt.CheckState</code>.</li>
-</ul>
-
-<p>by <a href="https://www.linkedin.com/in/gbvitrano/">@gbvitrano</a> —
-<a href="https://opendatasicilia.it/">@opendatasicilia</a></p>
-<p style="color:#888888; font-size:10px; font-style:italic;">Plugin QGIS per gestione punti geografici da sorgenti dati online — compatibile QGIS 3 e QGIS 4</p>
-
-</body></html>
-        """)
+        self._info_browser = QTextBrowser()
+        self._info_browser.setOpenExternalLinks(True)
+        self._info_browser.setHtml(tr("info_html"))
+        self._tr.append(lambda: self._info_browser.setHtml(tr("info_html")))
         info_tab_layout.addWidget(info_browser)
         # Aggiungi tab al layout
         input_layout.addWidget(self.source_tabs)
@@ -1111,23 +1030,31 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         scroll_layout.addWidget(input_group)
 
         # === SEZIONE COLLASSABILE: CONFIGURAZIONE CAMPI E CRS (CHIUSA DI DEFAULT) ===
-        self.fields_group = QGroupBox("Configurazione campi e CRS")
+        self.fields_group = QGroupBox(tr("fields_crs_group"))
+        self._tr.append(lambda: self.fields_group.setTitle(tr("fields_crs_group")))
         fields_layout = QGridLayout()
-        
-        fields_layout.addWidget(QLabel("X (Lon):"), 0, 0)
+
+        self._x_lon_lbl = QLabel(tr("x_lon_label"))
+        fields_layout.addWidget(self._x_lon_lbl, 0, 0)
+        self._tr.append(lambda: self._x_lon_lbl.setText(tr("x_lon_label")))
         self.x_field_combo = QComboBox()
         fields_layout.addWidget(self.x_field_combo, 0, 1)
-        
-        fields_layout.addWidget(QLabel("Y (Lat):"), 0, 2)
+
+        self._y_lat_lbl = QLabel(tr("y_lat_label"))
+        fields_layout.addWidget(self._y_lat_lbl, 0, 2)
+        self._tr.append(lambda: self._y_lat_lbl.setText(tr("y_lat_label")))
         self.y_field_combo = QComboBox()
         fields_layout.addWidget(self.y_field_combo, 0, 3)
-        
+
         # Pulsante refresh campi
-        self.refresh_fields_btn = self.create_icon_button("", "refresh", "Aggiorna campi", (50, 30))
+        self.refresh_fields_btn = self.create_icon_button("", "refresh", tr("refresh_fields_tooltip"), (50, 30))
+        self._tr.append(lambda: self.refresh_fields_btn.setToolTip(tr("refresh_fields_tooltip")))
         self.refresh_fields_btn.clicked.connect(self.refresh_fields)
         fields_layout.addWidget(self.refresh_fields_btn, 0, 4)
         
-        fields_layout.addWidget(QLabel("CRS:"), 1, 0)
+        self._crs_lbl = QLabel(tr("crs_label"))
+        self._tr.append(lambda: self._crs_lbl.setText(tr("crs_label")))
+        fields_layout.addWidget(self._crs_lbl, 1, 0)
         self.crs_combo = QComboBox()
         self.setup_crs_combo()
         fields_layout.addWidget(self.crs_combo, 1, 1, 1, 2)
@@ -1135,22 +1062,28 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         self.crs_selector = QgsProjectionSelectionWidget()
         self.crs_selector.setCrs(QgsCoordinateReferenceSystem("EPSG:4326"))
         
-        self.custom_crs_btn = self.create_icon_button("CRS...", "🌍", "Seleziona CRS personalizzato", (80, 30))
+        self.custom_crs_btn = self.create_icon_button(tr("custom_crs_btn"), "🌍", tr("custom_crs_tooltip"), (80, 30))
+        self._tr.append(lambda: (self.custom_crs_btn.setText(f"🌍 {tr('custom_crs_btn')}"), self.custom_crs_btn.setToolTip(tr("custom_crs_tooltip"))))
         self.custom_crs_btn.clicked.connect(self.select_custom_crs)
         fields_layout.addWidget(self.custom_crs_btn, 1, 3, 1, 2)
         
-        self.current_crs_label = QLabel("CRS: EPSG:4326 - WGS 84")
+        self.current_crs_label = QLabel(tr("crs_current"))
         self.current_crs_label.setStyleSheet(f"color: {_Theme.crs_color}; font-size: 9pt;")
         fields_layout.addWidget(self.current_crs_label, 2, 0, 1, 5)
         
-        fields_layout.addWidget(QLabel("Nome Layer virtuale:"), 3, 0)
-        self.layer_name_edit = QLineEdit("Punti_virtuali")
+        self._layer_name_lbl = QLabel(tr("layer_name_label"))
+        self._tr.append(lambda: self._layer_name_lbl.setText(tr("layer_name_label")))
+        fields_layout.addWidget(self._layer_name_lbl, 3, 0)
+        self.layer_name_edit = QLineEdit(tr("layer_name_default"))
         fields_layout.addWidget(self.layer_name_edit, 3, 1, 1, 4)
 
-        fields_layout.addWidget(QLabel("Colonne:"), 4, 0)
-        self.columns_btn = QPushButton("— nessun layer caricato —")
+        self._columns_lbl = QLabel(tr("columns_label"))
+        self._tr.append(lambda: self._columns_lbl.setText(tr("columns_label")))
+        fields_layout.addWidget(self._columns_lbl, 4, 0)
+        self.columns_btn = QPushButton(tr("columns_no_layer"))
         self.columns_btn.setEnabled(False)
-        self.columns_btn.setToolTip("Modifica le colonne incluse nel layer virtuale")
+        self.columns_btn.setToolTip(tr("columns_btn_tooltip"))
+        self._tr.append(lambda: self.columns_btn.setToolTip(tr("columns_btn_tooltip")))
         self.columns_btn.clicked.connect(self._open_columns_dialog)
         fields_layout.addWidget(self.columns_btn, 4, 1, 1, 4)
         self._selected_columns = None   # None = tutte
@@ -1161,15 +1094,17 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         self.layer_tab.layout().addStretch()
         
         # Pulsanti esportazione (creati qui, inseriti nella barra pulsanti in fondo)
-        self.export_btn = self.create_large_button("Esporta Layer...", "#4CAF50", 10)
+        self.export_btn = self.create_large_button(tr("export_btn"), "#4CAF50", 10)
         self.export_btn.clicked.connect(self.export_layer_dialog)
         self.export_btn.setEnabled(False)
-        self.export_btn.setToolTip("Apre il dialogo nativo di QGIS per esportare in tutti i formati supportati")
+        self.export_btn.setToolTip(tr("export_btn_tooltip"))
+        self._tr.append(lambda: self.export_btn.setText(tr("export_btn")) or self.export_btn.setToolTip(tr("export_btn_tooltip")))
 
-        self.quick_save_btn = self.create_large_button("Salva GPKG", "#FF9800", 10)
+        self.quick_save_btn = self.create_large_button(tr("quick_save_btn"), "#FF9800", 10)
         self.quick_save_btn.clicked.connect(self.quick_save_geopackage)
         self.quick_save_btn.setEnabled(False)
-        self.quick_save_btn.setToolTip("Salvataggio rapido come GeoPackage")
+        self.quick_save_btn.setToolTip(tr("quick_save_tooltip"))
+        self._tr.append(lambda: self.quick_save_btn.setText(tr("quick_save_btn")) or self.quick_save_btn.setToolTip(tr("quick_save_tooltip")))
 
 
         # Progress bar
@@ -1183,11 +1118,13 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
 
         self.log_text = QTextEdit()
         self.log_text.setReadOnly(True)
-        self.log_text.setPlainText("GeoPoint Manager v5.1 pronto - Google Sheets → GeoPackage, aggiornamento manuale on-demand...")
+        self.log_text.setPlainText(tr("log_ready"))
         log_tab_layout.addWidget(self.log_text)
 
-        self.source_tabs.addTab(self.log_tab, "Log")
-        self.source_tabs.addTab(self.info_tab, "Info / About")
+        self.source_tabs.addTab(self.log_tab, tr("tab_log"))
+        self.source_tabs.addTab(self.info_tab, tr("tab_info"))
+        self._tr.append(lambda: self.source_tabs.setTabText(2, tr("tab_log")))
+        self._tr.append(lambda: self.source_tabs.setTabText(3, tr("tab_info")))
         
         # Imposta il widget scrollabile
         scroll_area.setWidget(scroll_widget)
@@ -1196,11 +1133,13 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         # === PULSANTI PRINCIPALI ===
         buttons_layout = QHBoxLayout()
         
-        self.create_btn = self.create_large_button("Aggiungi layer vettoriale di punti", "#4CAF50", 11)
+        self.create_btn = self.create_large_button(tr("create_points_btn"), "#4CAF50", 11)
         self.create_btn.clicked.connect(self.create_points_layer)
+        self._tr.append(lambda: self.create_btn.setText(tr("create_points_btn")))
 
-        self.close_btn = self.create_large_button("Chiudi", "#757575", 10)
+        self.close_btn = self.create_large_button(tr("close"), "#757575", 10)
         self.close_btn.clicked.connect(self.close)
+        self._tr.append(lambda: self.close_btn.setText(tr("close")))
 
         buttons_layout.addWidget(self.create_btn)
         buttons_layout.addStretch()
@@ -1210,14 +1149,36 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
 
         main_layout.addLayout(buttons_layout)
 
-        # Titolo centrato in fondo
-        footer = QLabel("GeoPoint Manager - v5.1")
+        # Footer: titolo centrato + pulsante lingua
+        footer_layout = QHBoxLayout()
+        self._footer_lbl = QLabel(tr("footer"))
         footer_font = QFont()
         footer_font.setPointSize(8)
-        footer.setFont(footer_font)
-        footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        footer.setStyleSheet(f"color: {_Theme.text_muted}; padding: 2px 0;")
-        main_layout.addWidget(footer)
+        self._footer_lbl.setFont(footer_font)
+        self._footer_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._footer_lbl.setStyleSheet(f"color: {_Theme.text_muted}; padding: 2px 0;")
+        footer_layout.addWidget(self._footer_lbl, 1)
+
+        self._lang_btn = QPushButton(tr("lang_btn"))
+        self._lang_btn.setToolTip(tr("lang_btn_tooltip"))
+        self._lang_btn.setFixedWidth(36)
+        self._lang_btn.setFixedHeight(22)
+        btn_fg = "#e0e0e0" if _Theme.dark else "#212121"
+        self._lang_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {_Theme.btn_bg};
+                color: {btn_fg};
+                border: 1px solid {_Theme.btn_border};
+                border-radius: 3px;
+                font-size: 8pt;
+                font-weight: bold;
+                padding: 1px 4px;
+            }}
+            QPushButton:hover {{ background-color: {_Theme.btn_hover}; }}
+        """)
+        self._lang_btn.clicked.connect(self._toggle_language)
+        footer_layout.addWidget(self._lang_btn)
+        main_layout.addLayout(footer_layout)
         self.setLayout(main_layout)
         
         # Connetti eventi
@@ -1225,28 +1186,44 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         self.crs_combo.currentTextChanged.connect(self.on_crs_combo_changed)
         self.source_tabs.currentChanged.connect(self.on_source_tab_changed)
 
+    def _toggle_language(self):
+        """Alterna la lingua dell'interfaccia tra italiano e inglese."""
+        current = get_language()
+        new_lang = "en" if current == "it" else "it"
+        set_language(new_lang)
+        self.retranslate_ui()
+
+    def retranslate_ui(self):
+        """Aggiorna tutti i testi dell'interfaccia con la lingua corrente."""
+        self.setWindowTitle(tr("main_title"))
+        self._lang_btn.setText(tr("lang_btn"))
+        self._lang_btn.setToolTip(tr("lang_btn_tooltip"))
+        self._footer_lbl.setText(tr("footer"))
+        for fn in self._tr:
+            fn()
+
     def show_google_sheets_help(self):
         """Mostra una finestra di aiuto per Google Sheets"""
         help_dialog = QDialog(self)
-        help_dialog.setWindowTitle("Guida Google Sheets CSV")
+        help_dialog.setWindowTitle(tr("gs_help_dialog_title"))
         help_dialog.setFixedSize(500, 400)
         
         layout = QVBoxLayout()
         
-        title = QLabel("Google Sheets -> URL tipo")
+        title = QLabel(tr("gs_help_title"))
         title_font = QFont()
         title_font.setPointSize(11)
         title_font.setBold(True)
         title.setFont(title_font)
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title)
-        
+
         # Scroll area per il contenuto
         scroll = QScrollArea()
         content = QWidget()
         content_layout = QVBoxLayout(content)
-        
-        example_label = QLabel("Esempio URL:")
+
+        example_label = QLabel(tr("gs_help_example_label"))
         content_layout.addWidget(example_label)
         
         example_url = QLabel("https://docs.google.com/spreadsheets/d/[ID]/export?format=csv&gid=[SHEET_ID]")
@@ -1255,13 +1232,10 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         example_url.setStyleSheet(f"background-color: {_Theme.code_bg}; color: {code_fg}; padding: 5px; font-family: monospace; font-size: 9pt;")
         content_layout.addWidget(example_url)
         
-        steps_label = QLabel("Passi:")
+        steps_label = QLabel(tr("gs_help_steps_label"))
         content_layout.addWidget(steps_label)
-        
-        steps_text = QLabel("""1. Condividi il foglio: "Chiunque con link possa visualizzare"
-2. Sostituisci [ID] con l'ID del documento
-3. Sostituisci [SHEET_ID] con l'ID del foglio (opzionale)
-4. Il foglio deve avere colonne Lat/Long con coordinate decimali""")
+
+        steps_text = QLabel(tr("gs_help_steps"))
         steps_text.setWordWrap(True)
         steps_text.setStyleSheet("font-size: 9pt;")
         content_layout.addWidget(steps_text)
@@ -1269,7 +1243,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         scroll.setWidget(content)
         layout.addWidget(scroll)
         
-        ok_btn = self.create_large_button("OK", "#4CAF50", 10)
+        ok_btn = self.create_large_button(tr("ok"), "#4CAF50", 10)
         ok_btn.clicked.connect(help_dialog.accept)
         layout.addWidget(ok_btn)
         
@@ -1280,7 +1254,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
     def export_layer_dialog(self):
         """Esporta il layer punti nel formato scelto dall'utente (QGIS 3 e 4)."""
         if not self.points_layer:
-            QMessageBox.warning(self, "Errore", "Nessun layer da esportare!")
+            QMessageBox.warning(self, tr("err_title"), tr("err_no_export_layer"))
             return
 
         # Mappa estensione → driver OGR
@@ -1294,10 +1268,10 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         filter_str = ";;".join(f[0] for f in _FORMATS)
 
         file_path, selected_filter = QFileDialog.getSaveFileName(
-            self, "Esporta layer punti", self.points_layer.name(), filter_str
+            self, tr("export_dialog_title"), self.points_layer.name(), filter_str
         )
         if not file_path:
-            self.log("Esportazione annullata dall'utente")
+            self.log(tr("cancel_export"))
             return
 
         # Determina il driver dall'estensione (o dal filtro selezionato)
@@ -1318,23 +1292,21 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                 options
             )
             if error == _WRITER_OK:
-                self.log(f"Esportato come {driver}: {os.path.basename(file_path)}")
+                self.log(f"Exported as {driver}: {os.path.basename(file_path)}")
                 QMessageBox.information(
-                    self, "Successo",
-                    f"Layer esportato con successo!\n\n"
-                    f"Formato: {driver}\n"
-                    f"File: {os.path.basename(file_path)}"
+                    self, tr("success_title"),
+                    tr("success_export", driver, os.path.basename(file_path))
                 )
             else:
                 raise RuntimeError(msg)
         except Exception as e:
-            QMessageBox.critical(self, "Errore", f"Errore durante l'esportazione: {str(e)}")
-            self.log(f"Errore esportazione: {str(e)}")
+            QMessageBox.critical(self, tr("err_title"), tr("err_export", str(e)))
+            self.log(tr("err_export", str(e)))
 
     def quick_save_geopackage(self):
         """Salvataggio rapido come GeoPackage"""
         if not self.points_layer:
-            QMessageBox.warning(self, "Errore", "Nessun layer da salvare!")
+            QMessageBox.warning(self, tr("err_title"), tr("err_no_save_layer"))
             return
         
         try:
@@ -1343,7 +1315,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
             default_name = f"{self.points_layer.name()}_{timestamp}.gpkg"
             
             file_path, _ = QFileDialog.getSaveFileName(
-                self, "Salvataggio Rapido GeoPackage", default_name, "GeoPackage (*.gpkg)"
+                self, tr("quick_save_dialog_title"), default_name, "GeoPackage (*.gpkg)"
             )
             
             if not file_path:
@@ -1364,21 +1336,18 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
             )
             
             if error[0] == _WRITER_OK:
-                self.log(f"Salvato come GeoPackage: {os.path.basename(file_path)}")
-                
+                self.log(f"Saved as GeoPackage: {os.path.basename(file_path)}")
                 QMessageBox.information(
-                    self, "Successo", 
-                    f"GeoPackage salvato con successo!\n\n"
-                    f"File: {os.path.basename(file_path)}\n"
-                    f"Percorso: {file_path}"
+                    self, tr("success_title"),
+                    tr("success_save_gpkg", os.path.basename(file_path), file_path)
                 )
             else:
-                QMessageBox.critical(self, "Errore", f"Errore salvataggio: {error[1]}")
-                self.log(f"Errore salvataggio GeoPackage: {error[1]}")
-                
+                QMessageBox.critical(self, tr("err_title"), tr("err_save_gpkg", error[1]))
+                self.log(tr("err_save_gpkg", error[1]))
+
         except Exception as e:
-            QMessageBox.critical(self, "Errore", f"Errore: {str(e)}")
-            self.log(f"Errore salvataggio: {str(e)}")
+            QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(e)))
+            self.log(tr("err_save_gpkg", str(e)))
 
     def _write_source_registry(self, gpkg_path, layer_name, url):
         """Scrive/aggiorna la riga (layer_name, url) nella tabella _geopoint_sources del GeoPackage."""
@@ -1418,7 +1387,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
     def _browse_gpkg_path(self):
         """Apre il dialogo Salva per scegliere il percorso del nuovo GeoPackage."""
         path, _ = QFileDialog.getSaveFileName(
-            self, "Salva GeoPackage", "", "GeoPackage (*.gpkg)"
+            self, tr("browse_gpkg_title"), "", "GeoPackage (*.gpkg)"
         )
         if path:
             if not path.lower().endswith('.gpkg'):
@@ -1428,17 +1397,20 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
     def _open_existing_gpkg(self):
         """Apre il dialogo Apri per selezionare un GeoPackage esistente da aggiornare."""
         path, _ = QFileDialog.getOpenFileName(
-            self, "Apri GeoPackage esistente", "", "GeoPackage (*.gpkg)"
+            self, tr("open_gpkg_title"), "", "GeoPackage (*.gpkg)"
         )
         if path:
             self.gpkg_path_edit.setText(path)
-            # Mostra subito quante sorgenti sono registrate
             sources = self._read_source_registry(path)
             if sources:
                 nomi = ", ".join(s[0] for s in sources)
-                self.log(f"GeoPackage aperto: {len(sources)} sorgent{'e' if len(sources)==1 else 'i'} registrat{'a' if len(sources)==1 else 'e'} → {nomi}")
+                n = len(sources)
+                if n == 1:
+                    self.log(tr("gpkg_opened_sources_1", nomi))
+                else:
+                    self.log(tr("gpkg_opened_sources_n", n, nomi))
             else:
-                self.log("GeoPackage aperto — nessuna sorgente Google Sheets registrata")
+                self.log(tr("gpkg_opened_no_sources"))
 
     def _save_csv_to_geopackage(self, csv_path, gpkg_path, table_name):
         """Salva un CSV come tabella in un GeoPackage. Restituisce (ok, messaggio)."""
@@ -1490,14 +1462,12 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         """Legge la registry dal GeoPackage e aggiorna i layer selezionati dall'utente."""
         gpkg_path = self.gpkg_path_edit.text().strip()
         if not gpkg_path:
-            QMessageBox.warning(self, "Errore", "Inserisci il percorso del GeoPackage nel campo apposito.")
+            QMessageBox.warning(self, tr("err_title"), tr("err_gpkg_path"))
             return
 
         sources = self._read_source_registry(gpkg_path)
         if not sources:
-            QMessageBox.warning(self, "Nessuna sorgente",
-                "Nessuna sorgente Google Sheets registrata in questo GeoPackage.\n"
-                "Carica prima un Google Sheet per registrarlo.")
+            QMessageBox.warning(self, tr("no_sources_title"), tr("no_sources_msg"))
             return
 
         dlg = RefreshSourcesDialog(sources, self)
@@ -1548,10 +1518,10 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         html_parts = ["<table width='100%' cellspacing='4'>"]
         html_parts.append(
             "<tr>"
-            f"<th align='left'>Layer</th>"
-            f"<th align='right'>Prima</th>"
-            f"<th align='right'>Dopo</th>"
-            f"<th align='right'>Variazione</th>"
+            f"<th align='left'>{tr('tbl_layer')}</th>"
+            f"<th align='right'>{tr('tbl_before')}</th>"
+            f"<th align='right'>{tr('tbl_after')}</th>"
+            f"<th align='right'>{tr('tbl_delta')}</th>"
             "</tr>"
         )
         log_lines = []
@@ -1559,7 +1529,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
             if e["ok"]:
                 b, a = e["before"], e["after"]
                 if b == -1:
-                    delta_str = "nuovo"
+                    delta_str = tr("delta_new")
                     color = _Theme.accent
                 elif a > b:
                     delta_str = f"+{a - b}"
@@ -1568,7 +1538,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                     delta_str = f"{a - b}"
                     color = "#F44336"
                 else:
-                    delta_str = "nessuna"
+                    delta_str = tr("delta_none")
                     color = _Theme.text_muted
                 before_str = str(b) if b >= 0 else "—"
                 html_parts.append(
@@ -1591,10 +1561,10 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
 
         html_parts.append("</table>")
 
-        self.log("Aggiornamento completato:\n" + "\n".join(log_lines))
+        self.log(tr("log_update_done", "\n".join(log_lines)))
 
         msg_box = QMessageBox(self)
-        msg_box.setWindowTitle("Aggiornamento completato")
+        msg_box.setWindowTitle(tr("update_done_title"))
         msg_box.setTextFormat(Qt.TextFormat.RichText)
         msg_box.setText("".join(html_parts))
         msg_box.setIcon(QMessageBox.Icon.Information)
@@ -1620,11 +1590,11 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         url = self.ogr_url_edit.text().strip()
         
         if not url:
-            QMessageBox.warning(self, "Errore", "Inserisci un URL valido!")
+            QMessageBox.warning(self, tr("err_title"), tr("err_no_url"))
             return
-            
+
         if not url.startswith(('http://', 'https://', 'ftp://')):
-            QMessageBox.warning(self, "Errore", "L'URL deve iniziare con http://, https:// o ftp://")
+            QMessageBox.warning(self, tr("err_title"), tr("err_url_scheme"))
             return
             
         try:
@@ -1659,7 +1629,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                         self, "Salva GeoPackage", f"{layer_name}.gpkg", "GeoPackage (*.gpkg)"
                     )
                     if not gpkg_path_for_gs:
-                        self.log("Operazione annullata dall'utente")
+                        self.log(tr("cancel_user"))
                         return
                     if not gpkg_path_for_gs.lower().endswith('.gpkg'):
                         gpkg_path_for_gs += '.gpkg'
@@ -1675,16 +1645,16 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                     except Exception:
                         pass
                     if not ok:
-                        QMessageBox.critical(self, "Errore", f"Errore salvataggio GeoPackage: {msg}")
+                        QMessageBox.critical(self, tr("err_title"), tr("err_save_gpkg", msg))
                         return
                     actual_ogr_url = gpkg_path_for_gs
                     self._write_source_registry(gpkg_path_for_gs, layer_name, ogr_url)
                     self.log(f"GeoPackage salvato: {gpkg_path_for_gs}")
                 except urllib.error.URLError as dl_err:
-                    QMessageBox.critical(self, "Errore", f"Download fallito: {dl_err}")
+                    QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(dl_err)))
                     return
                 except Exception as dl_err:
-                    QMessageBox.critical(self, "Errore", f"Errore: {dl_err}")
+                    QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(dl_err)))
                     return
 
             # Determina la modalità di caricamento
@@ -1714,9 +1684,9 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                         ogr_layer = QgsVectorLayer(layer_specific_url, layer_name, "ogr")
                 
                 if not ogr_layer.isValid():
-                    QMessageBox.critical(self, "Errore", "Impossibile caricare i dati dall'URL.")
+                    QMessageBox.critical(self, tr("err_title"), tr("err_load_url"))
                     return
-                
+
                 # Applica CRS forzato se specificato
                 if self.ogr_crs_edit.text().strip():
                     try:
@@ -1735,7 +1705,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                 coord_dialog = CoordinateFieldsDialog(available_fields, self)
                 
                 if coord_dialog.exec() != QDialog.DialogCode.Accepted:
-                    self.log("Selezione campi annullata dall'utente")
+                    self.log(tr("cancel_fields"))
                     return
                 
                 # Ottieni i campi selezionati
@@ -1743,12 +1713,12 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                 selected_cols_from_dialog = coord_dialog.get_selected_columns()
                 
                 if not lat_field or not lon_field:
-                    QMessageBox.warning(self, "Errore", "Devi selezionare entrambi i campi di coordinate!")
+                    QMessageBox.warning(self, tr("err_title"), tr("err_no_coord_fields"))
                     return
-                
+
                 # Verifica che i campi selezionati esistano
                 if lat_field not in available_fields or lon_field not in available_fields:
-                    QMessageBox.warning(self, "Errore", "I campi selezionati non esistono nel dataset!")
+                    QMessageBox.warning(self, tr("err_title"), tr("err_fields_not_found"))
                     return
                 
                 self.log(f"Campi coordinate selezionati - Lat: {lat_field}, Lon: {lon_field}")
@@ -1799,7 +1769,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                     self._selected_columns = selected_cols_from_dialog
                     self._available_fields_cache = available_fields
                     n = len(selected_cols_from_dialog) if selected_cols_from_dialog else len(available_fields)
-                    self.columns_btn.setText(f"{n} / {len(available_fields)} colonne selezionate  ✎")
+                    self.columns_btn.setText(tr("columns_n_of_m", n, len(available_fields)))
                     self.columns_btn.setEnabled(True)
 
                     # Abilita i controlli per esportazione
@@ -1811,21 +1781,18 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
 
                     feature_count = self.points_layer.featureCount()
                     source_count = ogr_layer.featureCount()
-                    gs_note = f"\nGeoPackage: {gpkg_path_for_gs}\n✓ Usa '↻ Aggiorna dati' per sincronizzare con Google Sheets." if is_google_sheets else ""
+                    gs_note = tr("gs_note", gpkg_path_for_gs) if is_google_sheets else ""
 
                     QMessageBox.information(
-                        self, "Successo",
-                        f"Dati caricati e mappati automaticamente!\n\n"
-                        f"Layer punti: {points_layer_name}\n"
-                        f"Layer origine: {layer_name}\n"
-                        f"X (Lon): {lon_field}, Y (Lat): {lat_field}\n"
-                        f"Features: {feature_count} / {source_count}\n"
-                        f"CRS: {crs.authid()}{gs_note}"
+                        self, tr("success_title"),
+                        tr("success_load", points_layer_name, layer_name,
+                           lon_field, lat_field, feature_count, source_count,
+                           crs.authid(), gs_note)
                     )
                     return
                 else:
-                    QMessageBox.critical(self, "Errore", "Impossibile creare il layer di punti.")
-                    self.log("Impossibile creare il layer di punti")
+                    QMessageBox.critical(self, tr("err_title"), tr("err_create_points"))
+                    self.log(tr("err_create_points"))
                     return
             else:
                 # Modalità: scarica solo la tabella
@@ -1887,25 +1854,22 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
                     feature_count = ogr_layer.featureCount()
                     geometry_type = QgsWkbTypes.displayString(ogr_layer.wkbType())
                     crs_info = ogr_layer.crs().authid()
-                    gs_note = f"\nGeoPackage: {gpkg_path_for_gs}\n✓ Usa '↻ Aggiorna dati' per sincronizzare con Google Sheets." if is_google_sheets else ""
+                    gs_note = tr("gs_note", gpkg_path_for_gs) if is_google_sheets else ""
 
-                    self.log(f"Layer tabellare caricato: {layer_name} ({feature_count} features)")
+                    self.log(f"Layer loaded: {layer_name} ({feature_count} features)")
 
                     QMessageBox.information(
-                        self, "Successo",
-                        f"Layer caricato: {layer_name}\n\n"
-                        f"Tipo: {geometry_type}\n"
-                        f"CRS: {crs_info}\n"
-                        f"Features: {feature_count}{gs_note}\n\n"
-                        f"Usa la scheda 'Layer QGIS' per configurare la mappatura dei punti."
+                        self, tr("success_title"),
+                        tr("success_load_table", layer_name, geometry_type,
+                           crs_info, feature_count, gs_note)
                     )
                 else:
-                    QMessageBox.critical(self, "Errore", "Impossibile caricare i dati dall'URL.")
-                    self.log("Errore nel caricamento")
-                    
+                    QMessageBox.critical(self, tr("err_title"), tr("err_load_url"))
+                    self.log(tr("err_load_url"))
+
         except Exception as e:
-            QMessageBox.critical(self, "Errore", f"Errore: {str(e)}")
-            self.log(f"Errore: {str(e)}")
+            QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(e)))
+            self.log(tr("err_generic", str(e)))
 
     def _create_virtual_points_layer(self, source_layer, x_field, y_field, layer_name, crs,
                                       selected_fields=None):
@@ -2056,14 +2020,14 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
     def create_points_layer(self):
         """Crea il layer di punti dalla configurazione corrente"""
         if not self.source_layer:
-            QMessageBox.warning(self, "Errore", "Nessun layer di origine selezionato!")
+            QMessageBox.warning(self, tr("err_title"), tr("err_no_source_layer"))
             return
 
         x_field = self.x_field_combo.currentText()
         y_field = self.y_field_combo.currentText()
 
         if not x_field or not y_field:
-            QMessageBox.warning(self, "Errore", "Seleziona i campi X e Y!")
+            QMessageBox.warning(self, tr("err_title"), tr("err_no_xy_fields"))
             return
 
         layer_name = self.layer_name_edit.text().strip()
@@ -2082,16 +2046,11 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
             self.export_btn.setEnabled(True)
             self.quick_save_btn.setEnabled(True)
             QMessageBox.information(
-                self, "Successo",
-                f"Layer punti creato con successo!\n\n"
-                f"Nome: {layer_name}\n"
-                f"Tipo: Virtual Layer (auto-update)\n"
-                f"Features: {self.points_layer.featureCount()}\n"
-                f"CRS: {crs.authid()}\n\n"
-                f"✓ Il layer si aggiorna automaticamente con la sorgente!"
+                self, tr("success_title"),
+                tr("success_points", layer_name, self.points_layer.featureCount(), crs.authid())
             )
         else:
-            QMessageBox.critical(self, "Errore", "Impossibile creare il layer di punti.")
+            QMessageBox.critical(self, tr("err_title"), tr("err_create_points"))
 
     def get_selected_crs(self):
         """Restituisce il CRS selezionato"""
@@ -2125,7 +2084,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
     def select_custom_crs(self):
         """Apre il selettore di CRS personalizzato"""
         crs_dialog = QDialog(self)
-        crs_dialog.setWindowTitle("Seleziona CRS")
+        crs_dialog.setWindowTitle(tr("crs_dialog_title"))
         crs_dialog.setFixedSize(600, 400)
         
         layout = QVBoxLayout()
@@ -2138,11 +2097,11 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         # Pulsanti
         btn_layout = QHBoxLayout()
         
-        ok_btn = QPushButton("OK")
+        ok_btn = QPushButton(tr("ok"))
         ok_btn.clicked.connect(lambda: self.accept_crs(selector, crs_dialog))
         btn_layout.addWidget(ok_btn)
-        
-        cancel_btn = QPushButton("Annulla")
+
+        cancel_btn = QPushButton(tr("cancel"))
         cancel_btn.clicked.connect(crs_dialog.reject)
         btn_layout.addWidget(cancel_btn)
         
@@ -2189,7 +2148,7 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
             self.y_field_combo.addItem(name)
         self._available_fields_cache = field_names
         self._selected_columns = None  # reset: tutte le colonne
-        self.columns_btn.setText(f"{len(field_names)} / {len(field_names)} colonne selezionate  ✎")
+        self.columns_btn.setText(tr("columns_n_of_m", len(field_names), len(field_names)))
         self.columns_btn.setEnabled(True)
 
         # Auto-seleziona campi coordinate se disponibili
@@ -2247,20 +2206,20 @@ che hanno supportato la progettazione dell'architettura modulare, l'ottimizzazio
         if dlg.exec() == QDialog.DialogCode.Accepted:
             self._selected_columns = dlg.get_selected_columns()
             n = len(self._selected_columns) if self._selected_columns else len(self._available_fields_cache)
-            self.columns_btn.setText(f"{n} / {len(self._available_fields_cache)} colonne selezionate  ✎")
+            self.columns_btn.setText(tr("columns_n_of_m", n, len(self._available_fields_cache)))
 
     def refresh_fields(self):
         """Aggiorna i campi del layer corrente"""
         if self.source_layer:
             self.force_update_field_combos(self.source_layer)
-            self.log("Campi aggiornati")
+            self.log(tr("log_fields_updated"))
 
     def on_source_tab_changed(self, index):
         """Gestisce il cambio di scheda delle sorgenti"""
         if index == 0:  # Tab OGR
-            self.log("Modalità: Caricamento dati da URL")
+            self.log(tr("log_mode_ogr"))
         elif index == 1:  # Tab Layer QGIS
-            self.log("Modalità: Layer dal progetto QGIS")
+            self.log(tr("log_mode_layer"))
 
     def log(self, message):
         """Aggiunge un messaggio al log"""
@@ -2340,7 +2299,7 @@ class GeoPointManagerProvider(QgsProcessingProvider):
         return 'GeoPoint Manager'
 
     def longName(self):
-        return 'GeoPoint Manager - Strumenti per la gestione di punti geografici'
+        return tr("processing_long_name")
 
     def loadAlgorithms(self):
         """Metodo astratto obbligatorio: registra gli algoritmi del provider."""
