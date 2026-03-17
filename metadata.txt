@@ -4,17 +4,16 @@ qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 description=Crea layer di punti da sorgenti dati con coordinate (URL, Google Sheets, CSV, GeoJSON, layer esistenti). Compatibile con QGIS 3 e QGIS 4.
 version=5.1
-author=@gbvitrano, Claude - Anthropic
-email=info@example.com
+author=gbvitrano
+email=gbvitrano@gmail.com
 
 about=GeoPoint Manager consente di creare layer vettoriali di punti partendo da sorgenti dati che contengono campi coordinate (latitudine/longitudine). Supporta URL OGR/GDAL, Google Sheets (tramite CSV export), GeoJSON, WFS e layer QGIS già caricati nel progetto. Novità v5.1: fix caricamento Google Sheets su QGIS 4, aggiornamento manuale on-demand, compatibilità Qt5/Qt6.
 
-tracker=https://github.com/example/geopoint-manager/issues
-repository=https://github.com/example/geopoint-manager
+tracker=https://github.com/gbvitrano/geopoint_manager/issues
+repository=https://github.com/gbvitrano/geopoint_manager
 
 hasProcessingProvider=yes
 tags=points, coordinates, csv, google sheets, geojson, wfs, ogr, import, lat, lon
-homepage=https://github.com/example/geopoint-manager
 category=Vector
 icon=icons/icon.svg
 experimental=False
