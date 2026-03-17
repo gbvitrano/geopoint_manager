@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf geopoint_manager_build)",
+      "Bash(mkdir geopoint_manager_build)",
+      "Bash(cp -r \"d:/GitHub - Clone/gbvitrano/geopoint_manager/.\" geopoint_manager_build/geopoint_manager)",
+      "Bash(rm -rf geopoint_manager_build/geopoint_manager/.git)",
+      "Bash(rm -f geopoint_manager_build/geopoint_manager/README.md)",
+      "Bash(zip -r geopoint_manager_v5.1.zip geopoint_manager/)",
+      "Bash(powershell -Command \"Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.1.zip -Force\")"
+    ]
+  }
+}
