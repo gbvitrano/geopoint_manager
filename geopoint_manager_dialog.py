@@ -1141,44 +1141,47 @@ class GeoPointManagerDialog(QDialog):
         self.close_btn.clicked.connect(self.close)
         self._tr.append(lambda: self.close_btn.setText(tr("close")))
 
+        # Pulsante lingua — visibile nella barra principale
+        self._lang_btn = QPushButton(tr("lang_btn"))
+        self._lang_btn.setToolTip(tr("lang_btn_tooltip"))
+        self._lang_btn.setMinimumHeight(35)
+        self._lang_btn.setFixedWidth(60)
+        btn_fg = "#e0e0e0" if _Theme.dark else "#212121"
+        self._lang_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {_Theme.btn_bg};
+                color: {btn_fg};
+                border: 2px solid {_Theme.btn_border};
+                border-radius: 4px;
+                font-size: 9pt;
+                font-weight: bold;
+                padding: 4px;
+            }}
+            QPushButton:hover {{
+                background-color: {_Theme.btn_hover};
+                border-color: {_Theme.accent};
+            }}
+            QPushButton:pressed {{ background-color: {_Theme.btn_pressed}; }}
+        """)
+        self._lang_btn.clicked.connect(self._toggle_language)
+
         buttons_layout.addWidget(self.create_btn)
         buttons_layout.addStretch()
         buttons_layout.addWidget(self.export_btn)
         buttons_layout.addWidget(self.quick_save_btn)
+        buttons_layout.addWidget(self._lang_btn)
         buttons_layout.addWidget(self.close_btn)
 
         main_layout.addLayout(buttons_layout)
 
-        # Footer: titolo centrato + pulsante lingua
-        footer_layout = QHBoxLayout()
+        # Footer: titolo centrato
         self._footer_lbl = QLabel(tr("footer"))
         footer_font = QFont()
         footer_font.setPointSize(8)
         self._footer_lbl.setFont(footer_font)
         self._footer_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._footer_lbl.setStyleSheet(f"color: {_Theme.text_muted}; padding: 2px 0;")
-        footer_layout.addWidget(self._footer_lbl, 1)
-
-        self._lang_btn = QPushButton(tr("lang_btn"))
-        self._lang_btn.setToolTip(tr("lang_btn_tooltip"))
-        self._lang_btn.setFixedWidth(36)
-        self._lang_btn.setFixedHeight(22)
-        btn_fg = "#e0e0e0" if _Theme.dark else "#212121"
-        self._lang_btn.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {_Theme.btn_bg};
-                color: {btn_fg};
-                border: 1px solid {_Theme.btn_border};
-                border-radius: 3px;
-                font-size: 8pt;
-                font-weight: bold;
-                padding: 1px 4px;
-            }}
-            QPushButton:hover {{ background-color: {_Theme.btn_hover}; }}
-        """)
-        self._lang_btn.clicked.connect(self._toggle_language)
-        footer_layout.addWidget(self._lang_btn)
-        main_layout.addLayout(footer_layout)
+        main_layout.addWidget(self._footer_lbl)
         self.setLayout(main_layout)
         
         # Connetti eventi

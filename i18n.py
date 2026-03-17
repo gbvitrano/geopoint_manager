@@ -252,8 +252,8 @@ STRINGS = {
         "quick_save_tooltip": "Salvataggio rapido come GeoPackage",
         "footer":             "GeoPoint Manager - v5.1",
         # Language button
-        "lang_btn":         "EN",
-        "lang_btn_tooltip": "Switch to English",
+        "lang_btn":         "🌐 EN",
+        "lang_btn_tooltip": "Switch to English / Passa all'inglese",
         # Log
         "log_ready":        "GeoPoint Manager v5.1 pronto - Google Sheets → GeoPackage, aggiornamento manuale on-demand...",
         "log_mode_ogr":     "Modalità: Caricamento dati da URL",
@@ -403,8 +403,8 @@ STRINGS = {
         "quick_save_tooltip": "Quick save as GeoPackage",
         "footer":             "GeoPoint Manager - v5.1",
         # Language button
-        "lang_btn":         "IT",
-        "lang_btn_tooltip": "Passa all'interfaccia in italiano / Switch to Italian",
+        "lang_btn":         "🌐 IT",
+        "lang_btn_tooltip": "Passa all'italiano / Switch to Italian",
         # Log
         "log_ready":          "GeoPoint Manager v5.1 ready - Google Sheets → GeoPackage, manual on-demand update...",
         "log_mode_ogr":       "Mode: Loading data from URL",
