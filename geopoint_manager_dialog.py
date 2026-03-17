@@ -1023,7 +1023,7 @@ class GeoPointManagerDialog(QDialog):
         self._info_browser.setOpenExternalLinks(True)
         self._info_browser.setHtml(tr("info_html"))
         self._tr.append(lambda: self._info_browser.setHtml(tr("info_html")))
-        info_tab_layout.addWidget(info_browser)
+        info_tab_layout.addWidget(self._info_browser)
         # Aggiungi tab al layout
         input_layout.addWidget(self.source_tabs)
         input_group.setLayout(input_layout)
