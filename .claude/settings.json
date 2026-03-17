@@ -7,7 +7,18 @@
       "Bash(rm -rf geopoint_manager_build/geopoint_manager/.git)",
       "Bash(rm -f geopoint_manager_build/geopoint_manager/README.md)",
       "Bash(zip -r geopoint_manager_v5.1.zip geopoint_manager/)",
-      "Bash(powershell -Command \"Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.1.zip -Force\")"
+      "Bash(powershell -Command \"Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.1.zip -Force\")",
+      "Bash(gh issue:*)",
+      "Bash(sed -i 's/f\"\"{n} \\\\/ {len\\(available_fields\\)} colonne selezionate  ✎\"\"/tr\\(\"\"columns_n_of_m\"\", n, len\\(available_fields\\)\\)/g' geopoint_manager_dialog.py)",
+      "Bash(sed -i 's/f\"\"{len\\(field_names\\)} \\\\/ {len\\(field_names\\)} colonne selezionate  ✎\"\"/tr\\(\"\"columns_n_of_m\"\", len\\(field_names\\), len\\(field_names\\)\\)/g' geopoint_manager_dialog.py)",
+      "Bash(sed -i 's/f\"\"{n} \\\\/ {len\\(self._available_fields_cache\\)} colonne selezionate  ✎\"\"/tr\\(\"\"columns_n_of_m\"\", n, len\\(self._available_fields_cache\\)\\)/g' geopoint_manager_dialog.py)",
+      "Bash(rm -rf geopoint_manager)",
+      "Bash(cp -r \"d:/GitHub - Clone/gbvitrano/geopoint_manager/.\" geopoint_manager)",
+      "Bash(rm -rf geopoint_manager/.git geopoint_manager/README.md geopoint_manager/LICENSE geopoint_manager/.claude)",
+      "Bash(sed -i 's/GeoPoint Manager v5\\\\.1$/GeoPoint Manager v5.2/' geopoint_manager_dialog.py)",
+      "Bash(sed -i \"s/GeoPoint Manager - v5\\\\.1''/GeoPoint Manager - v5.2''/\" geopoint_manager_dialog.py)",
+      "Bash(sed -i 's/<h3>GeoPoint Manager v5\\\\.2<\\\\/h3>/<h3>GeoPoint Manager v5.2<\\\\/h3>/' geopoint_manager_dialog.py)",
+      "Bash(powershell -Command \"Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.2.zip -Force\")"
     ]
   }
 }
