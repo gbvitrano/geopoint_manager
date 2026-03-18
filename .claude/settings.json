@@ -18,7 +18,16 @@
       "Bash(sed -i 's/GeoPoint Manager v5\\\\.1$/GeoPoint Manager v5.2/' geopoint_manager_dialog.py)",
       "Bash(sed -i \"s/GeoPoint Manager - v5\\\\.1''/GeoPoint Manager - v5.2''/\" geopoint_manager_dialog.py)",
       "Bash(sed -i 's/<h3>GeoPoint Manager v5\\\\.2<\\\\/h3>/<h3>GeoPoint Manager v5.2<\\\\/h3>/' geopoint_manager_dialog.py)",
-      "Bash(powershell -Command \"Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.2.zip -Force\")"
+      "Bash(powershell -Command \"Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.2.zip -Force\")",
+      "Read(//c/Users/giova/OneDrive/Immagini/Screenpress0/Screenpresso/**)",
+      "Bash(COMMENT_ID=\"4078731776\")",
+      "Bash(gh api:*)",
+      "Bash(rm -f geopoint_manager_v5.2.zip)",
+      "Bash(zip -r geopoint_manager_v5.2.zip geopoint_manager/ --exclude \"geopoint_manager/.git/*\" --exclude \"geopoint_manager/.claude/*\")",
+      "Bash(powershell -Command \"Remove-Item -Force -ErrorAction SilentlyContinue geopoint_manager_v5.2.zip; Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.2.zip -Force; Write-Host ''Done''\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\giova\\OneDrive\\Immagini\\Screenpress0\\Screenpresso"
     ]
   }
 }
