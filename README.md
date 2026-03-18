@@ -300,5 +300,3 @@ geopoint_manager/
 GPL-2.0+
 
 by [@gbvitrano](https://github.com/gbvitrano) — [@opendatasicilia](https://opendatasicilia.it/)
-
-<img width="802" height="782" alt="2026-03-17_14h32_59" src="https://github.com/user-attachments/assets/775b7acd-fea9-4b32-b0f4-52205064f73b" /> <img width="802" height="782" alt="2026-03-17_14h33_15" src="https://github.com/user-attachments/assets/d3eedae1-395f-4cc3-8b5a-dbb669aebe14" /> <img width="802" height="782" alt="2026-03-17_14h33_50" src="https://github.com/user-attachments/assets/3eb6aedb-fa60-4829-b3d9-0869102b210c" /> <img width="802" height="782" alt="2026-03-17_14h33_37" src="https://github.com/user-attachments/assets/4c3d692f-a968-4565-b118-1b833013980e" />
