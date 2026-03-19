@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Script QGIS - GeoPoint Manager v5.2
-Plugin per creare layer di punti da sorgenti dati con coordinate
-NOVITÀ v5.1: Fix caricamento Google Sheets su QGIS 4 (download via urllib + salvataggio GeoPackage),
-             aggiornamento manuale on-demand, compatibilità QGIS 3 (Qt5/PyQt5) e QGIS 4 (Qt6/PyQt6)
+GeoPoint Manager v5.2 - QGIS Plugin
+Creates point vector layers from data sources with coordinate fields (lat/lon).
+Supports OGR/GDAL URLs, Google Sheets, GeoJSON, WFS and existing QGIS layers.
+Compatible with QGIS 3 (Qt5/PyQt5) and QGIS 4 (Qt6/PyQt6).
 """
 
 import os
@@ -21,11 +21,11 @@ _QGIS4 = Qgis.versionInt() >= 40000
 
 if _QGIS4:
     from qgis.PyQt.QtCore import QMetaType, Qt, QSize, pyqtSignal, QMargins, QTimer
-    _FIELD_INT    = QMetaType.Type.Int
+    _FIELD_INT = QMetaType.Type.Int
     _FIELD_STRING = QMetaType.Type.QString
 else:
     from qgis.PyQt.QtCore import QVariant, Qt, QSize, pyqtSignal, QMargins, QTimer
-    _FIELD_INT    = QVariant.Int
+    _FIELD_INT = QVariant.Int
     _FIELD_STRING = QVariant.String
 
 from qgis.PyQt.QtWidgets import (

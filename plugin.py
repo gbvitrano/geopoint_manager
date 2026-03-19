@@ -46,7 +46,7 @@ class GeoPointManagerPlugin:
             self.iface.mainWindow()
         )
         self.toolbar_action.setToolTip(
-            "GeoPoint Manager v5.1 — Crea layer di punti da sorgenti coordinate"
+            "GeoPoint Manager v5.2 — Create point layers from coordinate data sources"
         )
         self.toolbar_action.triggered.connect(self.run)
 

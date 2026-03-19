@@ -2,16 +2,18 @@
 name=GeoPoint Manager
 qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
-description=Crea layer di punti da sorgenti dati con coordinate (URL, Google Sheets, CSV, GeoJSON, layer esistenti). Interfaccia bilingue ITA/EN. Compatibile con QGIS 3 e QGIS 4.
+description=Creates point vector layers from data sources with coordinate fields (lat/lon). Supports OGR/GDAL URLs, Google Sheets, GeoJSON, WFS and existing QGIS layers. Bilingual ITA/EN interface. Compatible with QGIS 3 and QGIS 4.
 version=5.2
 author=gbvitrano
 email=gbvitrano@gmail.com
 
-about=GeoPoint Manager consente di creare layer vettoriali di punti partendo da sorgenti dati con campi coordinate (lat/lon). Supporta URL OGR/GDAL, Google Sheets, GeoJSON, WFS e layer QGIS esistenti. Interfaccia bilingue ITA/EN con switch al volo. v5.2: fix NameError info_browser, pulsante lingua nella toolbar principale. v5.1: fix Google Sheets su QGIS 4, GeoPackage persistente, refresh manuale, compatibilità Qt5/Qt6.
+about=GeoPoint Manager lets you create point vector layers from any data source that contains latitude/longitude fields. It supports OGR/GDAL URLs, Google Sheets (via CSV export), GeoJSON, WFS services, and existing QGIS layers. The bilingual ITA/EN interface can be switched on the fly. Data from Google Sheets is downloaded and stored persistently in a local GeoPackage with on-demand manual refresh. Compatible with both QGIS 3 (Qt5/PyQt5) and QGIS 4 (Qt6/PyQt6).
 
+homepage=https://github.com/gbvitrano/geopoint_manager
 tracker=https://github.com/gbvitrano/geopoint_manager/issues
 repository=https://github.com/gbvitrano/geopoint_manager
 
+license=GNU General Public License v2 or later
 hasProcessingProvider=yes
 tags=points, coordinates, csv, google sheets, geojson, wfs, ogr, import, lat, lon, bilingual, i18n
 category=Vector
@@ -21,8 +23,8 @@ deprecated=False
 server=False
 
 changelog=
-  5.2 - Interfaccia bilingue ITA/EN con pulsante switch nella toolbar principale (i18n.py),
-        fix NameError info_browser in setup_ui
-  5.1 - Fix caricamento Google Sheets su QGIS 4 (download via urllib + salvataggio GeoPackage),
-        aggiornamento manuale on-demand, compatibilità QGIS 3 (Qt5/PyQt5) e QGIS 4 (Qt6/PyQt6)
-  5.0 - Prima release come plugin installabile
+  5.2 - Bilingual ITA/EN interface with language-switch button in main toolbar (i18n.py),
+        fix NameError on info_browser in setup_ui
+  5.1 - Fix Google Sheets loading on QGIS 4 (urllib download + GeoPackage storage),
+        on-demand manual refresh, QGIS 3 (Qt5/PyQt5) and QGIS 4 (Qt6/PyQt6) compatibility
+  5.0 - First release as installable plugin
