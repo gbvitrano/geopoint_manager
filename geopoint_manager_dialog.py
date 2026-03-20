@@ -34,7 +34,7 @@ from qgis.PyQt.QtWidgets import (
     QTabWidget, QWidget, QFormLayout, QGroupBox, QGridLayout,
     QScrollArea, QMessageBox, QFileDialog, QRadioButton,
     QStyleOptionGroupBox, QStyle, QCheckBox, QTextBrowser,
-    QListWidget, QListWidgetItem, QFrame, QSizePolicy
+    QListWidget, QListWidgetItem, QFrame, QSizePolicy, QSpinBox
 )
 from qgis.PyQt.QtGui import QFont, QIcon, QCursor
 from qgis.core import (
@@ -889,7 +889,103 @@ class GeoPointManagerDialog(QDialog):
         
         format_name_layout.addStretch()
         ogr_layout.addLayout(format_name_layout)
-        
+
+        # Separatore CSV (visibile solo per formato CSV / Google Sheets)
+        self.csv_sep_widget = QWidget()
+        csv_sep_layout = QHBoxLayout()
+        csv_sep_layout.setContentsMargins(0, 0, 0, 0)
+        self._csv_sep_lbl = QLabel(tr("csv_sep_label"))
+        csv_sep_layout.addWidget(self._csv_sep_lbl)
+        self._tr.append(lambda: self._csv_sep_lbl.setText(tr("csv_sep_label")))
+        self.csv_sep_combo = QComboBox()
+        self.csv_sep_combo.addItems([
+            tr("csv_sep_comma"),
+            tr("csv_sep_semicolon"),
+            tr("csv_sep_tab"),
+            tr("csv_sep_pipe"),
+            tr("csv_sep_custom"),
+        ])
+        self.csv_sep_combo.setToolTip(tr("csv_sep_tooltip"))
+        self._tr.append(lambda: (
+            [self.csv_sep_combo.setItemText(i, t) for i, t in enumerate([
+                tr("csv_sep_comma"), tr("csv_sep_semicolon"),
+                tr("csv_sep_tab"), tr("csv_sep_pipe"), tr("csv_sep_custom"),
+            ])]
+            or self.csv_sep_combo.setToolTip(tr("csv_sep_tooltip"))
+        ))
+        csv_sep_layout.addWidget(self.csv_sep_combo)
+        self.csv_sep_custom_edit = QLineEdit()
+        self.csv_sep_custom_edit.setPlaceholderText(tr("csv_sep_custom_placeholder"))
+        self.csv_sep_custom_edit.setMaximumWidth(80)
+        self.csv_sep_custom_edit.setVisible(False)
+        self._tr.append(lambda: self.csv_sep_custom_edit.setPlaceholderText(tr("csv_sep_custom_placeholder")))
+        csv_sep_layout.addWidget(self.csv_sep_custom_edit)
+        csv_sep_layout.addStretch()
+        self.csv_sep_widget.setLayout(csv_sep_layout)
+        self.csv_sep_widget.setVisible(False)
+        ogr_layout.addWidget(self.csv_sep_widget)
+
+        # Opzioni Record e Campi CSV (visibile solo per CSV / Google Sheets)
+        self.csv_opts_group = QGroupBox(tr("csv_opts_group"))
+        self._tr.append(lambda: self.csv_opts_group.setTitle(tr("csv_opts_group")))
+        csv_opts_layout = QGridLayout()
+        csv_opts_layout.setVerticalSpacing(4)
+
+        # Riga 0: righe da saltare
+        self._csv_skip_lbl = QLabel(tr("csv_skip_rows_label"))
+        self._tr.append(lambda: self._csv_skip_lbl.setText(tr("csv_skip_rows_label")))
+        csv_opts_layout.addWidget(self._csv_skip_lbl, 0, 0)
+        self.csv_skip_spin = QSpinBox()
+        self.csv_skip_spin.setRange(0, 99)
+        self.csv_skip_spin.setValue(0)
+        self.csv_skip_spin.setMaximumWidth(70)
+        self.csv_skip_spin.setToolTip(tr("csv_skip_rows_tooltip"))
+        self._tr.append(lambda: self.csv_skip_spin.setToolTip(tr("csv_skip_rows_tooltip")))
+        csv_opts_layout.addWidget(self.csv_skip_spin, 0, 1, 1, 1)
+
+        # Riga 1-2: checkbox opzioni
+        self.csv_has_header_cb = QCheckBox(tr("csv_has_header"))
+        self.csv_has_header_cb.setChecked(True)
+        self.csv_has_header_cb.setToolTip(tr("csv_has_header_tooltip"))
+        self._tr.append(lambda: self.csv_has_header_cb.setText(tr("csv_has_header")) or self.csv_has_header_cb.setToolTip(tr("csv_has_header_tooltip")))
+        csv_opts_layout.addWidget(self.csv_has_header_cb, 1, 0, 1, 2)
+
+        self.csv_decimal_comma_cb = QCheckBox(tr("csv_decimal_comma"))
+        self.csv_decimal_comma_cb.setChecked(False)
+        self.csv_decimal_comma_cb.setToolTip(tr("csv_decimal_comma_tooltip"))
+        self._tr.append(lambda: self.csv_decimal_comma_cb.setText(tr("csv_decimal_comma")) or self.csv_decimal_comma_cb.setToolTip(tr("csv_decimal_comma_tooltip")))
+        csv_opts_layout.addWidget(self.csv_decimal_comma_cb, 1, 2, 1, 2)
+
+        self.csv_trim_fields_cb = QCheckBox(tr("csv_trim_fields"))
+        self.csv_trim_fields_cb.setChecked(False)
+        self.csv_trim_fields_cb.setToolTip(tr("csv_trim_fields_tooltip"))
+        self._tr.append(lambda: self.csv_trim_fields_cb.setText(tr("csv_trim_fields")) or self.csv_trim_fields_cb.setToolTip(tr("csv_trim_fields_tooltip")))
+        csv_opts_layout.addWidget(self.csv_trim_fields_cb, 2, 0, 1, 2)
+
+        self.csv_discard_empty_cb = QCheckBox(tr("csv_discard_empty"))
+        self.csv_discard_empty_cb.setChecked(False)
+        self.csv_discard_empty_cb.setToolTip(tr("csv_discard_empty_tooltip"))
+        self._tr.append(lambda: self.csv_discard_empty_cb.setText(tr("csv_discard_empty")) or self.csv_discard_empty_cb.setToolTip(tr("csv_discard_empty_tooltip")))
+        csv_opts_layout.addWidget(self.csv_discard_empty_cb, 2, 2, 1, 2)
+
+        self.csv_opts_group.setLayout(csv_opts_layout)
+        self.csv_opts_group.setVisible(False)
+        ogr_layout.addWidget(self.csv_opts_group)
+
+        def _on_format_changed(_):
+            fmt = self.ogr_format_combo.currentText()
+            is_csv = fmt in ("CSV", "Google Sheets")
+            self.csv_sep_widget.setVisible(is_csv)
+            self.csv_opts_group.setVisible(is_csv)
+
+        def _on_sep_changed(_):
+            self.csv_sep_custom_edit.setVisible(
+                self.csv_sep_combo.currentIndex() == 4  # "Personalizzato"
+            )
+
+        self.ogr_format_combo.currentIndexChanged.connect(_on_format_changed)
+        self.csv_sep_combo.currentIndexChanged.connect(_on_sep_changed)
+
         # Modalità di caricamento
         mode_group = QWidget()
         mode_layout = QHBoxLayout()
@@ -1415,40 +1511,143 @@ class GeoPointManagerDialog(QDialog):
             else:
                 self.log(tr("gpkg_opened_no_sources"))
 
-    def _save_csv_to_geopackage(self, csv_path, gpkg_path, table_name):
-        """Salva un CSV come tabella in un GeoPackage. Restituisce (ok, messaggio)."""
-        csv_layer = QgsVectorLayer(csv_path, "csv_temp", "ogr")
-        if not csv_layer.isValid():
-            return False, "Impossibile leggere il CSV scaricato"
+    def _get_csv_delimiter(self):
+        """Restituisce il carattere separatore CSV scelto dall'utente."""
+        idx = self.csv_sep_combo.currentIndex()
+        mapping = {0: ",", 1: ";", 2: "\t", 3: "|"}
+        if idx in mapping:
+            return mapping[idx]
+        # Personalizzato
+        custom = self.csv_sep_custom_edit.text()
+        return custom[:1] if custom else ","
 
-        options = QgsVectorFileWriter.SaveVectorOptions()
-        options.driverName = "GPKG"
-        options.layerName = table_name
-        # Se il file esiste già, sovrascrive solo il layer; altrimenti crea il file da zero.
-        # CreateOrOverwriteLayer richiede che il file esista (apre in update mode).
-        file_exists = os.path.exists(gpkg_path)
-        if _QGIS4:
-            options.actionOnExistingFile = (
-                QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteLayer
-                if file_exists else
-                QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteFile
-            )
-        else:
-            options.actionOnExistingFile = (
-                QgsVectorFileWriter.CreateOrOverwriteLayer
-                if file_exists else
-                QgsVectorFileWriter.CreateOrOverwriteFile
-            )
+    def _get_csv_options(self):
+        """Restituisce un dict con tutte le opzioni CSV dalla UI."""
+        return {
+            "delimiter":      self._get_csv_delimiter(),
+            "skip_rows":      self.csv_skip_spin.value(),
+            "has_header":     self.csv_has_header_cb.isChecked(),
+            "decimal_comma":  self.csv_decimal_comma_cb.isChecked(),
+            "trim_fields":    self.csv_trim_fields_cb.isChecked(),
+            "discard_empty":  self.csv_discard_empty_cb.isChecked(),
+        }
 
-        error, msg, _, _ = QgsVectorFileWriter.writeAsVectorFormatV3(
-            csv_layer,
-            gpkg_path,
-            QgsProject.instance().transformContext(),
-            options
+    def _normalize_csv_to_temp(self, src_path, delimiter, skip_rows=0, has_header=True,
+                                decimal_comma=False, trim_fields=False, discard_empty=False):
+        """Normalizza un CSV in un file temp con virgola come delimiter.
+        Applica le opzioni di trasformazione richieste.
+        Restituisce (percorso_da_usare, percorso_temp_da_eliminare).
+        Se non serve nessuna trasformazione, restituisce (src_path, None)."""
+        import csv as _csv
+        import re as _re
+
+        _decimal_re = _re.compile(r'^-?\d+,\d+$')
+
+        def _fix_value(val):
+            if trim_fields:
+                val = val.strip()
+            if decimal_comma and _decimal_re.match(val.strip()):
+                val = val.replace(',', '.')
+            return val
+
+        needs_transform = (
+            delimiter != ","
+            or skip_rows > 0
+            or not has_header
+            or decimal_comma
+            or trim_fields
+            or discard_empty
         )
-        if error == _WRITER_OK:
-            return True, ""
-        return False, msg
+        if not needs_transform:
+            return src_path, None
+
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".csv", delete=False, newline="", encoding="utf-8"
+        )
+        try:
+            with open(src_path, newline="", encoding="utf-8-sig") as f_in:
+                reader = _csv.reader(f_in, delimiter=delimiter)
+                writer = _csv.writer(tmp)
+                row_num = 0
+                for row in reader:
+                    # Salta le righe iniziali di intestazione
+                    if row_num < skip_rows:
+                        row_num += 1
+                        continue
+                    row_num += 1
+
+                    # Se la prima riga non è l'intestazione, genera nomi sintetici
+                    if not has_header and row_num == skip_rows + 1:
+                        header = [f"Field{i+1}" for i in range(len(row))]
+                        writer.writerow(header)
+
+                    # Applica trasformazioni ai valori
+                    row = [_fix_value(v) for v in row]
+
+                    # Scarta i campi vuoti in coda
+                    if discard_empty:
+                        while row and row[-1] == "":
+                            row.pop()
+
+                    writer.writerow(row)
+        finally:
+            tmp.close()
+        return tmp.name, tmp.name
+
+    def _save_csv_to_geopackage(self, csv_path, gpkg_path, table_name, csv_opts=None):
+        """Salva un CSV come tabella in un GeoPackage. Restituisce (ok, messaggio)."""
+        opts = csv_opts or {}
+        tmp_norm = None
+        try:
+            load_path, tmp_norm = self._normalize_csv_to_temp(
+                csv_path,
+                delimiter=opts.get("delimiter", ","),
+                skip_rows=opts.get("skip_rows", 0),
+                has_header=opts.get("has_header", True),
+                decimal_comma=opts.get("decimal_comma", False),
+                trim_fields=opts.get("trim_fields", False),
+                discard_empty=opts.get("discard_empty", False),
+            )
+            csv_layer = QgsVectorLayer(load_path, "csv_temp", "ogr")
+            if not csv_layer.isValid():
+                return False, "Impossibile leggere il CSV scaricato"
+
+            options = QgsVectorFileWriter.SaveVectorOptions()
+            options.driverName = "GPKG"
+            options.layerName = table_name
+            # Se il file esiste già, sovrascrive solo il layer; altrimenti crea il file da zero.
+            # CreateOrOverwriteLayer richiede che il file esista (apre in update mode).
+            file_exists = os.path.exists(gpkg_path)
+            if _QGIS4:
+                options.actionOnExistingFile = (
+                    QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteLayer
+                    if file_exists else
+                    QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteFile
+                )
+            else:
+                options.actionOnExistingFile = (
+                    QgsVectorFileWriter.CreateOrOverwriteLayer
+                    if file_exists else
+                    QgsVectorFileWriter.CreateOrOverwriteFile
+                )
+
+            error, msg, _, _ = QgsVectorFileWriter.writeAsVectorFormatV3(
+                csv_layer,
+                gpkg_path,
+                QgsProject.instance().transformContext(),
+                options
+            )
+            if error == _WRITER_OK:
+                return True, ""
+            return False, msg
+        except Exception as e:
+            return False, f"Errore lettura CSV: {e}"
+        finally:
+            if tmp_norm:
+                try:
+                    os.remove(tmp_norm)
+                except Exception:
+                    pass
 
     def _gpkg_feature_count(self, gpkg_path, table_name):
         """Restituisce il numero di righe di una tabella nel GeoPackage, o -1 se non esiste."""
@@ -1489,7 +1688,7 @@ class GeoPointManagerDialog(QDialog):
                 entry["before"] = self._gpkg_feature_count(gpkg_path, layer_name)
 
                 temp_path = self._download_to_temp_csv(url)
-                ok, msg = self._save_csv_to_geopackage(temp_path, gpkg_path, layer_name)
+                ok, msg = self._save_csv_to_geopackage(temp_path, gpkg_path, layer_name, self._get_csv_options())
                 try:
                     os.remove(temp_path)
                 except Exception:
@@ -1600,6 +1799,7 @@ class GeoPointManagerDialog(QDialog):
             QMessageBox.warning(self, tr("err_title"), tr("err_url_scheme"))
             return
             
+        _temp_csv_to_delete = None
         try:
             self.log(f"Caricamento da: {url[:50]}...")
             
@@ -1621,6 +1821,10 @@ class GeoPointManagerDialog(QDialog):
             # GDAL/OGR in QGIS 4 non segue i redirect HTTP 302/303 di Google;
             # urllib.request li gestisce correttamente.
             is_google_sheets = 'docs.google.com' in url
+            fmt = self.ogr_format_combo.currentText()
+            is_csv_format = fmt in ("CSV", "Google Sheets") or url.lower().split("?")[0].endswith(".csv")
+            csv_opts = self._get_csv_options() if is_csv_format else {}
+            csv_delimiter = csv_opts.get("delimiter", ",")
             actual_ogr_url = ogr_url
             gpkg_path_for_gs = None
 
@@ -1642,7 +1846,9 @@ class GeoPointManagerDialog(QDialog):
                 try:
                     temp_csv_path = self._download_to_temp_csv(ogr_url)
                     self.log("CSV scaricato, salvo nel GeoPackage...")
-                    ok, msg = self._save_csv_to_geopackage(temp_csv_path, gpkg_path_for_gs, layer_name)
+                    ok, msg = self._save_csv_to_geopackage(
+                        temp_csv_path, gpkg_path_for_gs, layer_name, csv_opts
+                    )
                     try:
                         os.remove(temp_csv_path)
                     except Exception:
@@ -1656,6 +1862,32 @@ class GeoPointManagerDialog(QDialog):
                 except urllib.error.URLError as dl_err:
                     QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(dl_err)))
                     return
+                except Exception as dl_err:
+                    QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(dl_err)))
+                    return
+
+            elif is_csv_format and (csv_delimiter != "," or any(csv_opts.get(k) for k in
+                    ("skip_rows", "decimal_comma", "trim_fields", "discard_empty"))
+                    or not csv_opts.get("has_header", True)):
+                # CSV diretto con opzioni non-default: scarica e normalizza prima del caricamento OGR
+                self.log(f"CSV con opzioni personalizzate - scarico e normalizzo...")
+                try:
+                    temp_csv_path = self._download_to_temp_csv(ogr_url)
+                    norm_path, norm_tmp = self._normalize_csv_to_temp(
+                        temp_csv_path,
+                        delimiter=csv_delimiter,
+                        skip_rows=csv_opts.get("skip_rows", 0),
+                        has_header=csv_opts.get("has_header", True),
+                        decimal_comma=csv_opts.get("decimal_comma", False),
+                        trim_fields=csv_opts.get("trim_fields", False),
+                        discard_empty=csv_opts.get("discard_empty", False),
+                    )
+                    try:
+                        os.remove(temp_csv_path)
+                    except Exception:
+                        pass
+                    actual_ogr_url = norm_path
+                    _temp_csv_to_delete = norm_tmp
                 except Exception as dl_err:
                     QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(dl_err)))
                     return
@@ -1873,6 +2105,12 @@ class GeoPointManagerDialog(QDialog):
         except Exception as e:
             QMessageBox.critical(self, tr("err_title"), tr("err_generic", str(e)))
             self.log(tr("err_generic", str(e)))
+        finally:
+            if _temp_csv_to_delete:
+                try:
+                    os.remove(_temp_csv_to_delete)
+                except Exception:
+                    pass
 
     def _create_virtual_points_layer(self, source_layer, x_field, y_field, layer_name, crs,
                                       selected_fields=None):

@@ -48,7 +48,7 @@ def tr(key, *args, **kwargs):
 
 _INFO_HTML_IT = """
 <html><body style="font-family: sans-serif; font-size: 13px; padding: 8px;">
-<h2 style="color:#2196F3;">GeoPoint Manager v5.2</h2>
+<h2 style="color:#2196F3;">GeoPoint Manager v5.3</h2>
 <p>Plugin QGIS per creare <b>layer vettoriali di punti</b> a partire da sorgenti dati contenenti
 campi di coordinate geografiche (latitudine/longitudine).</p>
 <p><b>Compatibilità:</b> QGIS 3.16+ / 4.x &nbsp;|&nbsp; <b>Licenza:</b> GPL-2.0+<br>
@@ -73,6 +73,8 @@ campi di coordinate geografiche (latitudine/longitudine).</p>
   <li><b>Google Sheets integration</b> — salva i CSV scaricati in un GeoPackage locale,
       con registro persistente (<code>_geopoint_sources</code>) e refresh manuale on-demand.</li>
   <li><b>Gestione CRS flessibile</b> — auto-rilevamento o forzatura del sistema di riferimento.</li>
+  <li><b>Separatore CSV personalizzato</b> — virgola, punto e virgola, tab, pipe o carattere custom.</li>
+  <li><b>Opzioni Record e Campi CSV</b> — righe da saltare, virgola come separatore decimale, tronca campi, scarta campi vuoti.</li>
   <li><b>Export multiplo</b> — GeoPackage, Shapefile, GeoJSON, KML, CSV.</li>
   <li><b>Processing integration</b> — accessibile anche dal QGIS Processing Framework.</li>
 </ol>
@@ -80,12 +82,18 @@ campi di coordinate geografiche (latitudine/longitudine).</p>
 <h3>Interfaccia utente</h3>
 <table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse; width:100%;">
   <tr style="background:#e3f2fd;"><th>Tab</th><th>Descrizione</th></tr>
-  <tr><td><b>Dati OGR/GDAL</b></td><td>Caricamento da URL. Include Opzioni Avanzate e salvataggio GeoPackage.</td></tr>
+  <tr><td><b>Dati OGR/GDAL</b></td><td>Caricamento da URL. Include separatore CSV, opzioni record/campi, Opzioni Avanzate e salvataggio GeoPackage.</td></tr>
   <tr><td><b>Dati da layer QGIS</b></td><td>Caricamento da layer già presenti nel progetto.</td></tr>
   <tr><td><b>Log</b></td><td>Storico delle operazioni con timestamp.</td></tr>
   <tr><td><b>Info / About</b></td><td>Documentazione del plugin.</td></tr>
 </table>
 <hr>
+<h3>Novità v5.3</h3>
+<ul>
+  <li><b>Separatore CSV personalizzato</b> — selettore virgola / punto e virgola / tab / pipe / personalizzato.</li>
+  <li><b>Opzioni Record e Campi</b> — righe da saltare, la virgola è il separatore decimale (es. <code>38,126112</code> → <code>38.126112</code>), tronca campi, scarta campi vuoti.</li>
+  <li>Opzioni applicate anche al refresh Google Sheets.</li>
+</ul>
 <h3>Novità v5.2</h3>
 <ul>
   <li><b>Interfaccia bilingue ITA / EN</b> — pulsante <b>🌐 IT/EN</b> nella barra inferiore per cambiare lingua al volo.</li>
@@ -109,7 +117,7 @@ Repository: <a href="https://github.com/gbvitrano/geopoint_manager">github.com/g
 
 _INFO_HTML_EN = """
 <html><body style="font-family: sans-serif; font-size: 13px; padding: 8px;">
-<h2 style="color:#2196F3;">GeoPoint Manager v5.2</h2>
+<h2 style="color:#2196F3;">GeoPoint Manager v5.3</h2>
 <p>QGIS plugin to create <b>point vector layers</b> from data sources containing
 geographic coordinate fields (latitude/longitude).</p>
 <p><b>Compatibility:</b> QGIS 3.16+ / 4.x &nbsp;|&nbsp; <b>License:</b> GPL-2.0+<br>
@@ -134,6 +142,8 @@ geographic coordinate fields (latitude/longitude).</p>
   <li><b>Google Sheets integration</b> — downloads CSV and saves to a local GeoPackage,
       with a persistent source registry (<code>_geopoint_sources</code>) and manual on-demand refresh.</li>
   <li><b>Flexible CRS management</b> — auto-detection or override of the reference system.</li>
+  <li><b>Custom CSV separator</b> — comma, semicolon, tab, pipe or custom character.</li>
+  <li><b>CSV Record and Field Options</b> — skip rows, comma as decimal separator, trim fields, discard empty fields.</li>
   <li><b>Multiple export formats</b> — GeoPackage, Shapefile, GeoJSON, KML, CSV.</li>
   <li><b>Processing integration</b> — also accessible from the QGIS Processing Framework.</li>
 </ol>
@@ -141,12 +151,18 @@ geographic coordinate fields (latitude/longitude).</p>
 <h3>User interface</h3>
 <table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse; width:100%;">
   <tr style="background:#e3f2fd;"><th>Tab</th><th>Description</th></tr>
-  <tr><td><b>OGR/GDAL Data</b></td><td>Load from URL. Includes Advanced Options and GeoPackage saving.</td></tr>
+  <tr><td><b>OGR/GDAL Data</b></td><td>Load from URL. Includes CSV separator, record/field options, Advanced Options and GeoPackage saving.</td></tr>
   <tr><td><b>QGIS layer data</b></td><td>Load from layers already present in the project.</td></tr>
   <tr><td><b>Log</b></td><td>Operation history with timestamps.</td></tr>
   <tr><td><b>Info / About</b></td><td>Plugin documentation.</td></tr>
 </table>
 <hr>
+<h3>What's new in v5.3</h3>
+<ul>
+  <li><b>Custom CSV separator</b> — comma / semicolon / tab / pipe / custom selector.</li>
+  <li><b>Record and Field Options</b> — skip header rows, comma as decimal separator (e.g. <code>38,126112</code> → <code>38.126112</code>), trim fields, discard empty fields.</li>
+  <li>All options also apply when refreshing Google Sheets data.</li>
+</ul>
 <h3>What's new in v5.2</h3>
 <ul>
   <li><b>Bilingual ITA / EN interface</b> — <b>🌐 IT/EN</b> button in the bottom bar to switch language on the fly.</li>
@@ -175,7 +191,7 @@ Repository: <a href="https://github.com/gbvitrano/geopoint_manager">github.com/g
 STRINGS = {
     "it": {
         # Window titles
-        "main_title":             "GeoPoint Manager - v5.2",
+        "main_title":             "GeoPoint Manager - v5.3",
         "coord_dialog_title":     "Seleziona Campi Coordinate e Colonne",
         "refresh_dialog_title":   "Aggiorna sorgenti Google Sheets",
         "gs_help_dialog_title":   "Guida Google Sheets CSV",
@@ -225,6 +241,25 @@ STRINGS = {
         "table_only_tooltip":            "Scarica i dati come layer tabellare senza mappatura automatica",
         "direct_points_radio":           "Aggiungi tabella dati e layer virtuale",
         "direct_points_tooltip":         "Crea automaticamente il layer di punti mappando i campi coordinate",
+        "csv_sep_label":                 "Separatore CSV:",
+        "csv_sep_tooltip":               "Separatore di campo usato nel file CSV",
+        "csv_sep_comma":                 "Virgola (,)",
+        "csv_sep_semicolon":             "Punto e virgola (;)",
+        "csv_sep_tab":                   "Tab (\\t)",
+        "csv_sep_pipe":                  "Pipe (|)",
+        "csv_sep_custom":                "Personalizzato",
+        "csv_sep_custom_placeholder":    "Inserisci il separatore",
+        "csv_opts_group":                "Opzioni Record e Campi",
+        "csv_skip_rows_label":           "Righe intestazione da saltare:",
+        "csv_skip_rows_tooltip":         "Numero di righe iniziali da ignorare prima dell'intestazione",
+        "csv_has_header":                "Il primo record ha i nomi dei campi",
+        "csv_has_header_tooltip":        "La prima riga (dopo le righe saltate) contiene i nomi delle colonne",
+        "csv_decimal_comma":             "La virgola è il separatore decimale",
+        "csv_decimal_comma_tooltip":     "I valori numerici usano la virgola come separatore decimale (es. 38,126112)",
+        "csv_trim_fields":               "Tronca campi",
+        "csv_trim_fields_tooltip":       "Rimuove gli spazi iniziali e finali da ogni valore",
+        "csv_discard_empty":             "Scarta i campi vuoti",
+        "csv_discard_empty_tooltip":     "Ignora i campi vuoti alla fine di ogni riga",
         "advanced_options_title":        "Opzioni Avanzate",
         "gpkg_save_label":               "Salva dati come GeoPackage (richiesto per Google Sheets):",
         "gpkg_path_placeholder":         "Percorso file .gpkg — lascia vuoto per scegliere al caricamento",
@@ -260,12 +295,12 @@ STRINGS = {
         "export_btn_tooltip": "Apre il dialogo nativo di QGIS per esportare in tutti i formati supportati",
         "quick_save_btn":     "Salva GPKG",
         "quick_save_tooltip": "Salvataggio rapido come GeoPackage",
-        "footer":             "GeoPoint Manager - v5.2",
+        "footer":             "GeoPoint Manager - v5.3",
         # Language button
         "lang_btn":         "🌐 EN",
         "lang_btn_tooltip": "Switch to English / Passa all'inglese",
         # Log
-        "log_ready":        "GeoPoint Manager v5.2 pronto - Google Sheets → GeoPackage, aggiornamento manuale on-demand...",
+        "log_ready":        "GeoPoint Manager v5.3 pronto - Google Sheets → GeoPackage, aggiornamento manuale on-demand...",
         "log_mode_ogr":     "Modalità: Caricamento dati da URL",
         "log_mode_layer":   "Modalità: Layer dal progetto QGIS",
         "log_fields_updated": "Campi aggiornati",
@@ -318,7 +353,7 @@ STRINGS = {
         "gpkg_opened_sources_n": "GeoPackage aperto: {} sorgenti registrate → {}",
         "gpkg_opened_no_sources":"GeoPackage aperto — nessuna sorgente Google Sheets registrata",
         # Processing
-        "processing_help": "<h3>GeoPoint Manager v5.2</h3><p>Plugin per creare layer di punti da sorgenti dati con coordinate</p>",
+        "processing_help": "<h3>GeoPoint Manager v5.3</h3><p>Plugin per creare layer di punti da sorgenti dati con coordinate</p>",
         "processing_long_name": "GeoPoint Manager - Strumenti per la gestione di punti geografici",
         # About
         "info_html": _INFO_HTML_IT,
@@ -326,7 +361,7 @@ STRINGS = {
 
     "en": {
         # Window titles
-        "main_title":             "GeoPoint Manager - v5.2",
+        "main_title":             "GeoPoint Manager - v5.3",
         "coord_dialog_title":     "Select Coordinate Fields and Columns",
         "refresh_dialog_title":   "Update Google Sheets Sources",
         "gs_help_dialog_title":   "Google Sheets CSV Guide",
@@ -376,6 +411,25 @@ STRINGS = {
         "table_only_tooltip":            "Download data as a tabular layer without automatic coordinate mapping",
         "direct_points_radio":           "Add data table and virtual layer",
         "direct_points_tooltip":         "Automatically create the points layer by mapping coordinate fields",
+        "csv_sep_label":                 "CSV Separator:",
+        "csv_sep_tooltip":               "Field separator used in the CSV file",
+        "csv_sep_comma":                 "Comma (,)",
+        "csv_sep_semicolon":             "Semicolon (;)",
+        "csv_sep_tab":                   "Tab (\\t)",
+        "csv_sep_pipe":                  "Pipe (|)",
+        "csv_sep_custom":                "Custom",
+        "csv_sep_custom_placeholder":    "Enter separator character",
+        "csv_opts_group":                "Record and Field Options",
+        "csv_skip_rows_label":           "Header rows to skip:",
+        "csv_skip_rows_tooltip":         "Number of initial rows to ignore before the header",
+        "csv_has_header":                "First record has field names",
+        "csv_has_header_tooltip":        "The first row (after skipped rows) contains column names",
+        "csv_decimal_comma":             "Comma is the decimal separator",
+        "csv_decimal_comma_tooltip":     "Numeric values use comma as decimal separator (e.g. 38,126112)",
+        "csv_trim_fields":               "Trim fields",
+        "csv_trim_fields_tooltip":       "Remove leading and trailing whitespace from each value",
+        "csv_discard_empty":             "Discard empty fields",
+        "csv_discard_empty_tooltip":     "Ignore empty fields at the end of each row",
         "advanced_options_title":        "Advanced Options",
         "gpkg_save_label":               "Save data as GeoPackage (required for Google Sheets):",
         "gpkg_path_placeholder":         ".gpkg file path — leave empty to choose at load time",
@@ -411,12 +465,12 @@ STRINGS = {
         "export_btn_tooltip": "Opens the native QGIS dialog to export in all supported formats",
         "quick_save_btn":     "Save GPKG",
         "quick_save_tooltip": "Quick save as GeoPackage",
-        "footer":             "GeoPoint Manager - v5.2",
+        "footer":             "GeoPoint Manager - v5.3",
         # Language button
         "lang_btn":         "🌐 IT",
         "lang_btn_tooltip": "Passa all'italiano / Switch to Italian",
         # Log
-        "log_ready":          "GeoPoint Manager v5.2 ready - Google Sheets → GeoPackage, manual on-demand update...",
+        "log_ready":          "GeoPoint Manager v5.3 ready - Google Sheets → GeoPackage, manual on-demand update...",
         "log_mode_ogr":       "Mode: Loading data from URL",
         "log_mode_layer":     "Mode: Layer from QGIS project",
         "log_fields_updated": "Fields updated",
@@ -469,7 +523,7 @@ STRINGS = {
         "gpkg_opened_sources_n": "GeoPackage opened: {} sources registered → {}",
         "gpkg_opened_no_sources":"GeoPackage opened — no Google Sheets sources registered",
         # Processing
-        "processing_help": "<h3>GeoPoint Manager v5.2</h3><p>Plugin to create point layers from data sources with coordinates</p>",
+        "processing_help": "<h3>GeoPoint Manager v5.3</h3><p>Plugin to create point layers from data sources with coordinates</p>",
         "processing_long_name": "GeoPoint Manager - Tools for geographic point management",
         # About
         "info_html": _INFO_HTML_EN,

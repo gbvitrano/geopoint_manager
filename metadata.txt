@@ -2,12 +2,12 @@
 name=GeoPoint Manager
 qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
-description=Creates point vector layers from data sources with coordinate fields (lat/lon). Supports OGR/GDAL URLs, Google Sheets, GeoJSON, WFS and existing QGIS layers. Bilingual ITA/EN interface. Compatible with QGIS 3 and QGIS 4.
-version=5.2
+description=Creates point vector layers from data sources with coordinate fields (lat/lon). Supports OGR/GDAL URLs, Google Sheets, GeoJSON, WFS and existing QGIS layers. Custom CSV separator and field options. Bilingual ITA/EN interface. Compatible with QGIS 3 and QGIS 4.
+version=5.3
 author=gbvitrano
 email=gbvitrano@gmail.com
 
-about=GeoPoint Manager lets you create point vector layers from any data source that contains latitude/longitude fields. It supports OGR/GDAL URLs, Google Sheets (via CSV export), GeoJSON, WFS services, and existing QGIS layers. The bilingual ITA/EN interface can be switched on the fly. Data from Google Sheets is downloaded and stored persistently in a local GeoPackage with on-demand manual refresh. Compatible with both QGIS 3 (Qt5/PyQt5) and QGIS 4 (Qt6/PyQt6).
+about=GeoPoint Manager lets you create point vector layers from any data source that contains latitude/longitude fields. It supports OGR/GDAL URLs, Google Sheets (via CSV export), GeoJSON, WFS services, and existing QGIS layers. Custom CSV separator (comma, semicolon, tab, pipe, custom) and record/field options (skip rows, decimal comma, trim fields, discard empty fields). The bilingual ITA/EN interface can be switched on the fly. Data from Google Sheets is downloaded and stored persistently in a local GeoPackage with on-demand manual refresh. Compatible with both QGIS 3 (Qt5/PyQt5) and QGIS 4 (Qt6/PyQt6).
 
 homepage=https://github.com/gbvitrano/geopoint_manager
 tracker=https://github.com/gbvitrano/geopoint_manager/issues
@@ -15,7 +15,7 @@ repository=https://github.com/gbvitrano/geopoint_manager
 
 license=GNU General Public License v2 or later
 hasProcessingProvider=yes
-tags=points, coordinates, csv, google sheets, geojson, wfs, ogr, import, lat, lon, bilingual, i18n
+tags=points, coordinates, csv, separator, delimiter, google sheets, geojson, wfs, ogr, import, lat, lon, bilingual, i18n
 category=Vector
 icon=icons/icon.svg
 experimental=False
@@ -23,6 +23,10 @@ deprecated=False
 server=False
 
 changelog=
+  5.3 - Custom CSV field separator (comma, semicolon, tab, pipe, custom character);
+        Record and Field Options: skip header rows, first record has field names,
+        comma as decimal separator (e.g. 38,126112 → 38.126112), trim fields,
+        discard empty fields. Options apply also to Google Sheets refresh.
   5.2 - Bilingual ITA/EN interface with language-switch button in main toolbar (i18n.py),
         fix NameError on info_browser in setup_ui
   5.1 - Fix Google Sheets loading on QGIS 4 (urllib download + GeoPackage storage),

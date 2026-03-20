@@ -1,4 +1,4 @@
-# GeoPoint Manager v5.2 — QGIS Plugin
+# GeoPoint Manager v5.3 — QGIS Plugin
 
 🇮🇹 [Italiano](#italiano) &nbsp;|&nbsp; 🇬🇧 [English](#english)
 
@@ -85,6 +85,18 @@ La barra inferiore contiene: **Aggiungi layer vettoriale di punti**, **Esporta L
 
 ---
 
+## Novità v5.3
+
+- **Supporto separatori CSV personalizzati** — selettore Virgola / Punto e virgola / Tab / Pipe / Personalizzato
+  nella scheda *Dati OGR/GDAL*, attivo quando il formato è CSV o Google Sheets.
+- **Opzioni Record e Campi CSV** — nuova sezione con le stesse opzioni del provider testo delimitato di QGIS:
+  - *Righe intestazione da saltare* (spinbox 0–99)
+  - *Il primo record ha i nomi dei campi* (default: attivo)
+  - *La virgola è il separatore decimale* — gestisce coordinate tipo `38,126112` convertendole in `38.126112`
+  - *Tronca campi* — rimuove spazi iniziali/finali da ogni valore
+  - *Scarta i campi vuoti* — ignora i campi vuoti in coda a ogni riga
+- Tutte le opzioni si applicano anche al refresh dei dati Google Sheets.
+
 ## Novità v5.2
 
 - **Interfaccia bilingue ITA / EN** — pulsante **🌐 IT/EN** nella barra inferiore per cambiare
@@ -110,7 +122,7 @@ La barra inferiore contiene: **Aggiungi layer vettoriale di punti**, **Esporta L
 ### Metodo 1 — Da ZIP (consigliato)
 
 1. In QGIS: **Plugin → Gestisci e installa plugin → Installa da ZIP**
-2. Seleziona il file `geopoint_manager_v5.2.zip`
+2. Seleziona il file `geopoint_manager_v5.3.zip`
 3. Clicca *Installa plugin*
 
 ### Metodo 2 — Manuale
@@ -233,6 +245,18 @@ The bottom bar contains: **Add vector points layer**, **Export Layer…**, **Sav
 
 ---
 
+## What's new in v5.3
+
+- **Custom CSV separator support** — selector Comma / Semicolon / Tab / Pipe / Custom
+  in the *OGR/GDAL Data* tab, active when the format is CSV or Google Sheets.
+- **Record and Field Options for CSV** — new section matching QGIS's delimited text provider options:
+  - *Header rows to skip* (spinbox 0–99)
+  - *First record has field names* (default: on)
+  - *Comma is the decimal separator* — handles coordinates like `38,126112`, converting them to `38.126112`
+  - *Trim fields* — removes leading/trailing whitespace from each value
+  - *Discard empty fields* — ignores empty fields at the end of each row
+- All options also apply when refreshing Google Sheets data.
+
 ## What's new in v5.2
 
 - **Bilingual ITA / EN interface** — **🌐 IT/EN** button in the bottom bar to switch language on the fly;
@@ -258,7 +282,7 @@ The bottom bar contains: **Add vector points layer**, **Export Layer…**, **Sav
 ### Method 1 — From ZIP (recommended)
 
 1. In QGIS: **Plugins → Manage and Install Plugins → Install from ZIP**
-2. Select the file `geopoint_manager_v5.2.zip`
+2. Select the file `geopoint_manager_v5.3.zip`
 3. Click *Install Plugin*
 
 ### Method 2 — Manual
