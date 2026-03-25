@@ -24,7 +24,12 @@
       "Bash(gh api:*)",
       "Bash(rm -f geopoint_manager_v5.2.zip)",
       "Bash(zip -r geopoint_manager_v5.2.zip geopoint_manager/ --exclude \"geopoint_manager/.git/*\" --exclude \"geopoint_manager/.claude/*\")",
-      "Bash(powershell -Command \"Remove-Item -Force -ErrorAction SilentlyContinue geopoint_manager_v5.2.zip; Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.2.zip -Force; Write-Host ''Done''\")"
+      "Bash(powershell -Command \"Remove-Item -Force -ErrorAction SilentlyContinue geopoint_manager_v5.2.zip; Compress-Archive -Path geopoint_manager -DestinationPath geopoint_manager_v5.2.zip -Force; Write-Host ''Done''\")",
+      "Read(//d//**)",
+      "Bash(python -c \"import docx; print\\(''''ok''''\\)\")",
+      "Bash(python -m pip show python-docx)",
+      "Bash(python _gen_docx.py)",
+      "Bash(python _gen_docx_simple.py)"
     ],
     "additionalDirectories": [
       "C:\\Users\\giova\\OneDrive\\Immagini\\Screenpress0\\Screenpresso"
